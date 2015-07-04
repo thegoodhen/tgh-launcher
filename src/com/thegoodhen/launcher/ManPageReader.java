@@ -16,13 +16,16 @@ public class ManPageReader {
 			Process p;
 			try {
 				p = Runtime.getRuntime().exec("man " +f.getName()+" | col -b ");
+				System.out.println("koko");
 				p.waitFor();
+				System.out.println("dak");
 				BufferedReader reader = 
 	                            new BufferedReader(new InputStreamReader(p.getInputStream()));
 	 
 	                        String line = "";			
 				while ((line = reader.readLine())!= null) {
 					sb.append(line + "\n");
+					
 				}
 	 
 			} catch (Exception e) {

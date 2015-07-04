@@ -6,7 +6,7 @@ public class FileNameGenerator implements IStringGenerator{
 
 
 	@Override
-	public String generateString(File f) {
+	public  String generateString(File f) {
 	
 		return f.getName();
 	}
