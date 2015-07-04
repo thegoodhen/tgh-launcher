@@ -12,7 +12,7 @@ String readString="NAME kokodak uji uji DESCRIPTION";
 		  
 		  readString=ManPageReader.read(f);
 		  //System.out.println(readString);
-		  Pattern pattern = Pattern.compile("NAME(.*?)[A-Z]+?",Pattern.DOTALL);
+		  Pattern pattern = Pattern.compile("NAME(.*?)\\s+[A-Z]+\\n",Pattern.DOTALL);
 	      Matcher matcher = pattern.matcher(readString);
 	      if(matcher.find())
 	      {
