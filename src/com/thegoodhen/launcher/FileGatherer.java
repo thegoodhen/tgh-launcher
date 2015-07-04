@@ -3,7 +3,14 @@ package com.thegoodhen.launcher;
 import java.io.File;
 
 public class FileGatherer {
-static final String programPath="usr/bin/";//TODO: load this from an external settings file
+
+	static String programPath="usr/bin/";//TODO: load this from an external settings file
+
+	public FileGatherer(String path)
+	{
+		programPath=path;
+	}
+	
 	public File[] gatherFiles()
 	{
 		File f=new File(programPath);
