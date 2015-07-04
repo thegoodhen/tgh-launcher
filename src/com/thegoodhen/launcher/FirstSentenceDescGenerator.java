@@ -12,8 +12,14 @@ String readString=".SH   DESCRIPTION kokodak je spesl pwogwam co umi upe vsecko.
 		  
 		  Pattern pattern = Pattern.compile("(\\.SH\\s*DESCRIPTION)(.*)(\\. )",Pattern.DOTALL);
 		  Matcher matcher = pattern.matcher(readString);
-	      matcher.find();
-		return matcher.group(2);
+	      if(matcher.find())
+	      {
+	    		return matcher.group(2);    	  
+	      }
+	      else
+	      {
+	    	  return "";
+	      }
 	}
 
 }
