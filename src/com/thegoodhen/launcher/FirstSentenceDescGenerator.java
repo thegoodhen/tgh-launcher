@@ -9,7 +9,7 @@ String readString=".SH   DESCRIPTION kokodak je spesl pwogwam co umi upe vsecko.
 
 	@Override
 	public String generateString(File f) {
-		  
+		  readString=ManPageReader.read(f);
 		  Pattern pattern = Pattern.compile("(\\.SH\\s*DESCRIPTION)(.*)(\\. )",Pattern.DOTALL);
 		  Matcher matcher = pattern.matcher(readString);
 	      if(matcher.find())
