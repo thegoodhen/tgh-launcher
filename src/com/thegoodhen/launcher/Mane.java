@@ -11,6 +11,8 @@ public class Mane {
 		// TODO Auto-generated method stub
 		FullNameGenerator fng=new FullNameGenerator();
 		System.out.println( fng.generateString(new File("")));
+		FirstSentenceDescGenerator fsdg=new FirstSentenceDescGenerator();
+		System.out.println( fsdg.generateString(new File("")));
 	}
 
 }
