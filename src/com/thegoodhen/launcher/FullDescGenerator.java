@@ -10,11 +10,12 @@ String readString=".SH   DESCRIPTION kokodak je spesl pwogwam co umi upe vsecko.
 	@Override
 	public String generateString(File f) {
 		  
-		  Pattern pattern = Pattern.compile("(\\.SH\\s*DESCRIPTION)(.*)(\\. )(.*)(\\.SH)",Pattern.DOTALL);
+		  readString=ManPageReader.read(f);
+		  Pattern pattern = Pattern.compile("(DESCRIPTION)(.+?)\\. (.+?)[A-Z]+?",Pattern.DOTALL);
 		  Matcher matcher = pattern.matcher(readString);
 	      if(matcher.find())
 	      {
-	    		return matcher.group(4);    	  
+	    		return matcher.group(3);    	  
 	      }
 	      else
 	      {
