@@ -1,5 +1,7 @@
 package com.thegoodhen.launcher;
 
+import java.io.File;
+
 public class Mane {
 
 	/**
@@ -7,7 +9,8 @@ public class Mane {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		FullNameGenerator fng=new FullNameGenerator();
+		System.out.println( fng.generateString(new File("")));
 	}
 
 }
