@@ -18,7 +18,7 @@ String readString="NAME kokodak uji uji DESCRIPTION";
 		 
 		Process p;
 		try {
-			p = Runtime.getRuntime().exec("timeout 1s whatis " +f.getName());//+" | col -b ");
+			p = Runtime.getRuntime().exec("timeout 1s whatis -l " +f.getName());//+" | col -b ");
 			//System.out.println("koko");
 			p.waitFor();
 			//System.out.println("dak");

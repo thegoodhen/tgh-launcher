@@ -1,6 +1,12 @@
 package com.thegoodhen.launcher;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 public class Mane {
 
@@ -14,8 +20,10 @@ public class Mane {
 		FullNameGenerator fng=new FullNameGenerator();
 		FirstSentenceDescGenerator fsdg=new FirstSentenceDescGenerator();
 		FullDescGenerator fdg=new FullDescGenerator();
-		
 		IStringGenerator gens[]={fing, fng};//, fsdg, fdg};
+		//PrintWriter writer = null;
+
+	try(PrintWriter writer = new PrintWriter("/home/thegoodhen/Documents/tgh_launcher_data.txt", "UTF-8");) {
 		
 		for(IStringGenerator isg:gens)
 		{
@@ -26,7 +34,15 @@ public class Mane {
 				
 			}
 		}
-	
+	} catch (FileNotFoundException | UnsupportedEncodingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+
+
+		
+		
+		
 		// TODO Auto-generated method stub
 
 		System.out.println( fng.generateString(new File("")));
