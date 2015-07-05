@@ -15,11 +15,11 @@ public class ManPageReader {
 	 
 			Process p;
 			try {
-				p = Runtime.getRuntime().exec("man " +f.getName()+" | col -b ");
-				System.out.println("koko");
+				p = Runtime.getRuntime().exec("timeout 1s man " +f.getName());//+" | col -b ");
+				//System.out.println("koko");
 				p.waitFor();
-				System.out.println("dak");
-				BufferedReader reader = 
+				//System.out.println("dak");
+				BufferedReader reader =	
 	                            new BufferedReader(new InputStreamReader(p.getInputStream()));
 	 
 	                        String line = "";			

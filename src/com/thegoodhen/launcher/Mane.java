@@ -15,14 +15,14 @@ public class Mane {
 		FirstSentenceDescGenerator fsdg=new FirstSentenceDescGenerator();
 		FullDescGenerator fdg=new FullDescGenerator();
 		
-		IStringGenerator gens[]={fing, fsdg, fsdg, fdg};
+		IStringGenerator gens[]={fing, fng, fsdg, fdg};
 		
 		for(IStringGenerator isg:gens)
 		{
 			for(File f:files)
 			{
 				System.out.println("[["+fing.generateString(f)+"]]");
-				System.out.println( fng.generateString(f));
+				System.out.println( isg.generateString(f));
 				
 			}
 		}
