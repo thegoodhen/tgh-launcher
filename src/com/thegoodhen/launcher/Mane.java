@@ -20,7 +20,7 @@ public class Mane {
 		FullNameGenerator fng=new FullNameGenerator();
 		FirstSentenceDescGenerator fsdg=new FirstSentenceDescGenerator();
 		FullDescGenerator fdg=new FullDescGenerator();
-		IStringGenerator gens[]={fing, fng};//, fsdg, fdg};
+		IStringGenerator gens[]={fing, fng, fsdg, fdg};
 		//PrintWriter writer = null;
 
 	try(PrintWriter writer = new PrintWriter("/home/thegoodhen/Documents/tgh_launcher_data.txt", "UTF-8");) {
@@ -29,8 +29,10 @@ public class Mane {
 		{
 			for(File f:files)
 			{
-				System.out.println("[["+fing.generateString(f)+"]]");
-				System.out.println( isg.generateString(f));
+				writer.write("[["+fing.generateString(f)+"]]\n");
+				writer.write(isg.generateString(f)+"\n");
+				//System.out.println("[["+fing.generateString(f)+"]]");
+				//System.out.println( isg.generateString(f));
 				
 			}
 		}
