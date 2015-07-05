@@ -15,7 +15,7 @@ public class Mane {
 		FirstSentenceDescGenerator fsdg=new FirstSentenceDescGenerator();
 		FullDescGenerator fdg=new FullDescGenerator();
 		
-		IStringGenerator gens[]={fing, fng, fsdg, fdg};
+		IStringGenerator gens[]={fing, fng};//, fsdg, fdg};
 		
 		for(IStringGenerator isg:gens)
 		{
