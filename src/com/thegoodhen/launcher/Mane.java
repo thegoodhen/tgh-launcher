@@ -22,15 +22,26 @@ public class Mane {
 		FullDescGenerator fdg=new FullDescGenerator();
 		IStringGenerator gens[]={fing, fng, fsdg, fdg};
 		//PrintWriter writer = null;
+		String guiAppsPath="/home/thegoodhen/Documents/tgh_launcher_gui.txt";
+		String termAppsPath="/home/thegoodhen/Documents/tgh_launcher_term.txt";
 
-	try(PrintWriter writer = new PrintWriter("/home/thegoodhen/Documents/tgh_launcher_data.txt", "UTF-8");) {
+	try(PrintWriter guiWriter = new PrintWriter(guiAppsPath, "UTF-8"); PrintWriter termWriter= new PrintWriter(termAppsPath, "UTF-8");) {
 		
 		for(IStringGenerator isg:gens)
 		{
 			for(File f:files)
 			{
-				writer.write("[["+fing.generateString(f)+"]]\n");
-				writer.write(isg.generateString(f)+"\n");
+				File desktopFile=new File("/usr/share/applications/"+fing.generateString(f)+".desktop");
+				if(desktopFile.exists())//TODO: Actually check the content of the .desktop file if it exists
+				{
+					guiWriter.write("[["+fing.generateString(f)+"]]\n");
+					guiWriter.write(isg.generateString(f)+"\n");
+				}
+				else
+				{
+					termWriter.write("[["+fing.generateString(f)+"]]\n");
+					termWriter.write(isg.generateString(f)+"\n");
+				}
 				//System.out.println("[["+fing.generateString(f)+"]]");
 				//System.out.println( isg.generateString(f));
 				
