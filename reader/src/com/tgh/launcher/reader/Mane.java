@@ -15,6 +15,7 @@ public class Mane {
 		AppList al=new AppList();
 		al.load(guiFile);
 		Scanner scan=new Scanner(System.in);
+		scan.useDelimiter("\n");
 		ArrayList<App> results=new ArrayList<App>();
 		
 		while(scan.hasNext())
@@ -23,7 +24,7 @@ public class Mane {
 			
 			for(App a:results)
 			{
-				System.out.println(a.name);
+				System.out.println(a.name+" "+a.relevance);
 			}
 		}
 		

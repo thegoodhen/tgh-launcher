@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AppList {
 int metaInfoCount;
@@ -16,7 +18,8 @@ ArrayList<App> theList=new ArrayList<App>();
 	
 		    String line = br.readLine();
 		    String appName="";
-		    String shortSearch="";
+		    //String shortSearch="";
+		    StringBuilder shortSearchSB=new StringBuilder();
 		    metaInfoCount=Integer.parseInt(line);
 		    while (line != null) {
 		    	line=br.readLine();
@@ -26,7 +29,7 @@ ArrayList<App> theList=new ArrayList<App>();
 		    	}
 		        if (line.equals(">>>BEGIN"))
 		        {
-		        	shortSearch="";
+		        	shortSearchSB.setLength(0);
 		        	appName = br.readLine();
 		        	for(int i=1;i<metaInfoCount;i++)
 		        	{
@@ -35,11 +38,11 @@ ArrayList<App> theList=new ArrayList<App>();
 		        }
 		        else if (line.equals(">>>END"))
 		         {
-		        	theList.add(new App(appName, shortSearch));	
+		        	theList.add(new App(appName, shortSearchSB.toString()));	
 		         }
 		        else
 		        {
-		        	shortSearch+=line;
+		        	shortSearchSB.append(line);
 		        }
 		    }
 
@@ -55,10 +58,11 @@ ArrayList<App> theList=new ArrayList<App>();
 	ArrayList<App> findApp(String searchString, int maxResults)
 	{
 		ArrayList<App> returnList=new ArrayList<App>();
-		String[] keyWords=searchString.split("\\,");
+		String[] keyWords=searchString.split(" ");
+		boolean breakout=false;
 		for (App a:theList)
 		{
-			if(returnList.size()>=maxResults)
+			if (breakout)
 			{
 				break;
 			}
@@ -81,9 +85,26 @@ ArrayList<App> theList=new ArrayList<App>();
 			if(a.relevance!=0)
 			{
 				returnList.add(a);
+				if(returnList.size()>=maxResults)
+				{
+					breakout=true;
+					break;
+				}
 			}
 		}
 		//TODO: Sort here
+		Collections.sort(returnList,new relevanceComparator());
 		return returnList;
 	}
+	private class relevanceComparator implements Comparator<App>
+	{
+
+		@Override
+		public int compare(App a0, App a1) {
+			// TODO Auto-generated method stub
+			return (a0.relevance>a1.relevance)?-1:1;
+		}
+		
+	}
+	
 }
