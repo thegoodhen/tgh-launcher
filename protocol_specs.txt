@@ -4,7 +4,7 @@ This document describes the structure of the files which store the information a
 As graphical (that is non-command line) programs will probably be ran most of the time,
 there shall be at least two separate files. One for the GUI applications, one for the terminal ones.
 Since the list of apps with GUI is typically shorter, this approach allows for better efficiency by searching the GUI file first
-before searching the TERM one. It also allows the program to quickly determine whether the selected app needs terminal to run.
+before searching the TERM one. It also allows the readerreader  program to quickly determine whether the selected app needs terminal to run.
 Generally speaking, the GUI list should only contain files that do *NOT* need to be ran in a terminal emulator for their proper function.
 This can be easily determined by checking the .desktop file assigned to the app in question. If there is none, we should assume the app does
 need a terminal window to run.
@@ -18,15 +18,44 @@ occasion the broader file can be searched. The fact that there is a brief file c
 initiates search.
 ##Structure
 The structure is the same for all four files (that is GUI and TERM files, brief and broad version).
-Each file is basically a list of entries. The entry starts with '>>>BEGIN' and ends with '>>>END', (without the quotation marks),
+Each file is basically a list of entries. On the very first line of the file there's a number. This number determines the number of pieces of metainformation 
+present about each application installed. List of entries follows.Each entry starts with '>>>BEGIN' and ends with '>>>END', (without the quotation marks),
 each placed on a separate line with no whitespace around.
-After the '>>>BEGIN' mark there shall be 8 lines. The first line, which follows right after the '>>>BEGIN' mark contains the (executable) name of the
-application and nothing else. The next 7 lines are reserved for future use and do not have to contain anything (apart from the newline symbol, of course.)
-However, it is recommended for them to contain one non-whitespace symbol, such as '.'. This will prevent accidents when opening the file in 
-editors that remove trailing whitespace and autosave.
-Anything after the 8th line up until the '>>>END' mark is considered to be a part of the string to search in. This approach makes parsing of the file 
-relatively trivial which allows for simple implementation even in low-level languages. It should also be very fast. Although the fact each entry 
-carries 7 useless lines increases the size of the final file, it should be noted that this is not significant, since each line only contains one or two characters.
-If the generator app changes and it will fill more lines, it will still be possible to use it with the old versions (although without the newest features).
+After the '>>>BEGIN' mark there shall be n lines, where n denotes the number of metainformation present about each app. The first line, which follows right after the '>>>BEGIN' mark contains the (executable) name of the
+application and nothing else. At this stage n=1 and no more metainformation lines follow after the first one.
+Anything after the nth line up until the '>>>END' mark is considered to be a part of the string to search in. This approach makes parsing of the file 
+relatively trivial which allows for simple implementation even in low-level languages.
+It is not errorous to include the same entry (as in same application with different search data) more than once in one file. It is not recommended
+for the short file, but recommended for the long one. In the long one, short entries should go first and then the app list should be repeated with the long one. 
+The fact entries can be duplicate needs to be taken into account in the reader program, however ignoring this fact will probably not
+result in any big issues.
+
+If the generator app changes and it will fill more lines, it will still be possible to use it with the old versions of the reader app 
+(although without the newest features). If the reader app doesn't know what to do with some of the lines, it should just skip them.
+
 Similarly it's possible to use an old generator with a new reader. 
-j
+
+Either way, the number n doubles as a version check. On mismatch, it's easy for the reader app to determine whether the generator version is newer or older.
+Of course, this way of storing the version info is ambiguous in principle, provided that features can not only be added, but also removed. In the rare case
+of removing a feature it should be replaced by a line with only '!' char on it in all future versions of the generator app. Using an empty line, that is only
+the '\n' character or even using different character or many of those is in principle compliant with this standard, but it is not recommended.
+The reason why '!' was chosen is that it is an ascii character, it is not a RegEx special character and it probably won't appear in a name of any app
+(avast! doesn't run on Linux, does it?) These aspects are not required, but are intended to minimize mishaps even with uncarefully coded reader apps.
+
+Once more pieces of metainformation will be added into this standard, they will be listed each on a separate line below the line with the name of the app.
+These changes will be reflected in a new version of this file.
+
+##Example
+What follows below is an example of how a file generated by the generator app should look like. Please note that all the comments denoted by the
+'//' symbols are only here for the purpose of this documentation and are not a part of valid syntax of the generated file.
+Files mentioned by this documentation are not supposed to be directly edited or viewed by humans and therefore do not need to feature comments.
+
+//The file begins here.
+1
+>>>BEGIN
+tghCmd
+ThegoodhenCommander - an awesome file manager
+ThegoodhenCommander is just a great file manager which manages your files and folders and it has like a dual pane mode and it doesn't even exists
+in the time of writing this documentation, but that doesn't matter, since neither does the actual protocol this doc mentions...
+>>>END
+//some more similar entries
