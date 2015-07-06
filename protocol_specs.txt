@@ -1,0 +1,32 @@
+#Protocol specifications
+This document describes the structure of the files which store the information about the programs currently installed on the computer.
+##Separation
+As graphical (that is non-command line) programs will probably be ran most of the time,
+there shall be at least two separate files. One for the GUI applications, one for the terminal ones.
+Since the list of apps with GUI is typically shorter, this approach allows for better efficiency by searching the GUI file first
+before searching the TERM one. It also allows the program to quickly determine whether the selected app needs terminal to run.
+Generally speaking, the GUI list should only contain files that do *NOT* need to be ran in a terminal emulator for their proper function.
+This can be easily determined by checking the .desktop file assigned to the app in question. If there is none, we should assume the app does
+need a terminal window to run.
+###Additional info
+Optionally there can be two files used for each group, that is GUI and TERM apps.
+One file should be brief, containing only basic info such as the name of the app or a very brief description (such as the NAME entry from man pages,
+the GenericName property from the .desktop file, the Comment property from the same file, etc.).
+Additional, less relevant (yet still relevant) info (such as the first sentence of the DESCRIPTION section of the man page) should be placed in a separate file.
+The reasoning behind this approach follows. The brief shorter file can be searched first and if no matches are found, if user requests deeper search or in a similar
+occasion the broader file can be searched. The fact that there is a brief file could, in some cases, eliminate the need to load data from hdd every time user
+initiates search.
+##Structure
+The structure is the same for all four files (that is GUI and TERM files, brief and broad version).
+Each file is basically a list of entries. The entry starts with '>>>BEGIN' and ends with '>>>END', (without the quotation marks),
+each placed on a separate line with no whitespace around.
+After the '>>>BEGIN' mark there shall be 8 lines. The first line, which follows right after the '>>>BEGIN' mark contains the (executable) name of the
+application and nothing else. The next 7 lines are reserved for future use and do not have to contain anything (apart from the newline symbol, of course.)
+However, it is recommended for them to contain one non-whitespace symbol, such as '.'. This will prevent accidents when opening the file in 
+editors that remove trailing whitespace and autosave.
+Anything after the 8th line up until the '>>>END' mark is considered to be a part of the string to search in. This approach makes parsing of the file 
+relatively trivial which allows for simple implementation even in low-level languages. It should also be very fast. Although the fact each entry 
+carries 7 useless lines increases the size of the final file, it should be noted that this is not significant, since each line only contains one or two characters.
+If the generator app changes and it will fill more lines, it will still be possible to use it with the old versions (although without the newest features).
+Similarly it's possible to use an old generator with a new reader. 
+j
