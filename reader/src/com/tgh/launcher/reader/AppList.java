@@ -69,13 +69,13 @@ ArrayList<App> theList=new ArrayList<App>();
 			a.relevance=0;
 			for(String s:keyWords)
 			{
-				if (a.name.contains(s))
+				if (a.name.toLowerCase().contains(s.toLowerCase()))
 				{
 					a.relevance+=4;
 				}
 				else //only if not found in the name
 				{
-					if(a.shortSearch.contains(s))
+					if(a.shortSearch.toLowerCase().contains(s.toLowerCase()))
 					{
 						a.relevance+=2;
 					}
@@ -84,7 +84,10 @@ ArrayList<App> theList=new ArrayList<App>();
 			}
 			if(a.relevance!=0)
 			{
-				returnList.add(a);
+				if (!returnList.contains(a))
+				{
+					returnList.add(a);
+				}
 				if(returnList.size()>=maxResults)
 				{
 					breakout=true;
@@ -102,7 +105,13 @@ ArrayList<App> theList=new ArrayList<App>();
 		@Override
 		public int compare(App a0, App a1) {
 			// TODO Auto-generated method stub
-			return (a0.relevance>a1.relevance)?-1:1;
+			if(a0.relevance>a1.relevance)
+				return -1;
+			if(a0.relevance==a1.relevance)
+				return 0;
+			if(a0.relevance<a1.relevance)
+				return 1;
+			return -1;
 		}
 		
 	}

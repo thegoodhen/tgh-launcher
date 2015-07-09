@@ -13,14 +13,16 @@ public class Mane {
 	public static void main(String[] args) {
 		guiFile=new File("/home/thegoodhen/Documents/tgh_launcher_gui.txt");
 		AppList al=new AppList();
+		ArrayList<App> results=new ArrayList<App>();
+		
 		al.load(guiFile);
 		Scanner scan=new Scanner(System.in);
 		scan.useDelimiter("\n");
-		ArrayList<App> results=new ArrayList<App>();
+	
 		
 		while(scan.hasNext())
 		{
-			results=al.findApp(scan.next(), 10);
+			results=al.findApp(scan.next(), 100);
 			
 			for(App a:results)
 			{

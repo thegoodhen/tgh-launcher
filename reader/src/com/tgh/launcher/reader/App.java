@@ -13,4 +13,15 @@ public App(String name, String shortSearch) {
 	this.shortSearch=shortSearch;
 }
 
+@Override
+public boolean equals(Object o)
+{
+	if (o instanceof App)
+	{
+		return name.equals(((App) o).name);
+	}
+	return false;
+	
+}
+
 }
