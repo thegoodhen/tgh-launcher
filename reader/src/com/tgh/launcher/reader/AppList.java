@@ -111,7 +111,7 @@ ArrayList<App> theList=new ArrayList<App>();
 				return 0;
 			if(a0.relevance<a1.relevance)
 				return 1;
-			return -1;
+			return -1;//required by IDE
 		}
 		
 	}

@@ -87,9 +87,11 @@ public class Gui {
 	{
 		results=al.findApp(textField.getText(), 100);
 		
+		System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n");
 		for(App a:results)
 		{
 			System.out.println(a.name+" "+a.relevance);
 		}
+		
 	}
 }
