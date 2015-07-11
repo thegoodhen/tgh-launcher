@@ -1,5 +1,6 @@
 package com.tgh.launcher.reader;
 
+import java.awt.Event;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -12,6 +13,8 @@ import javax.swing.JButton;
 import java.awt.event.InputMethodListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputMethodEvent;
 
 public class Gui {
@@ -27,7 +30,8 @@ public class Gui {
 	 */
 	public static void main(String[] args) {
 		
-		guiFile=new File("/home/thegoodhen/Documents/tgh_launcher_gui.txt");
+		//guiFile=new File("/home/thegoodhen/Documents/tgh_launcher_gui.txt");
+		guiFile=new File("C:/Users/Acer/tgh-launcher/reader/data/tgh_launcher_gui.txt");
 		al=new AppList();
 		al.load(guiFile);
 		
@@ -80,17 +84,33 @@ public class Gui {
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		
-		JButton btnTest = new JButton("test");
-		frame.getContentPane().add(btnTest);
+		//JButton btnTest = new JButton("test");
+		//frame.getContentPane().add(btnTest);
 	}
 	public void updateSearchResults()
 	{
+		
 		results=al.findApp(textField.getText(), 100);
 		
-		System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n");
+		String lineSep = System.getProperty("line.separator");
+		System.out.print(lineSep);
 		for(App a:results)
 		{
 			System.out.println(a.name+" "+a.relevance);
+			
+			JButton btnLaunch = new JButton(a.name); //add a.relevance to text ? seems irrelevant
+			btnLaunch.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+					//TODO: run app
+					
+						}
+						
+					}
+			);
+			
+			frame.getContentPane().add(btnLaunch);
+			
 		}
 		
 	}
