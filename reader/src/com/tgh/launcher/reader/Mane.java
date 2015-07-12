@@ -12,17 +12,21 @@ public class Mane {
 	static File guiFile;
 	public static void main(String[] args) {
 		guiFile=new File("/home/thegoodhen/Documents/tgh_launcher_gui.txt");
+		if (!guiFile.exists()){
+		guiFile=new File("C:/Users/Acer/tgh-launcher/reader/data/tgh_launcher_gui.txt");
+		}
 		AppList al=new AppList();
 		ArrayList<App> results=new ArrayList<App>();
 		
 		al.load(guiFile);
 		Scanner scan=new Scanner(System.in);
-		scan.useDelimiter("\n");
+		scan.useDelimiter(System.getProperty("line.separator"));
 	
 		
 		while(scan.hasNext())
 		{
 			results=al.findApp(scan.next(), 100);
+			
 			
 			for(App a:results)
 			{

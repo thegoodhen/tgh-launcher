@@ -30,8 +30,10 @@ public class Gui {
 	 */
 	public static void main(String[] args) {
 		
-		//guiFile=new File("/home/thegoodhen/Documents/tgh_launcher_gui.txt");
+		guiFile=new File("/home/thegoodhen/Documents/tgh_launcher_gui.txt");
+		if (!guiFile.exists()){
 		guiFile=new File("C:/Users/Acer/tgh-launcher/reader/data/tgh_launcher_gui.txt");
+		}
 		al=new AppList();
 		al.load(guiFile);
 		
@@ -102,8 +104,10 @@ public class Gui {
 			btnLaunch.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent e) {
-					//TODO: run app
-					
+						String appName = ((JButton)e.getSource()).getText();
+						System.out.println("The user, in their eternal wisdom, commands me to open " + appName);
+						//TODO: actually run the app
+						
 						}
 						
 					}
