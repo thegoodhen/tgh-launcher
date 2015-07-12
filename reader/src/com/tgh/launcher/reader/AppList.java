@@ -16,7 +16,7 @@ ArrayList<App> theList=new ArrayList<App>();
 		
 		try(BufferedReader br = new BufferedReader(new FileReader(f.getPath()))) {
 	
-		    String line = br.readLine();
+		    String line = br.readLine(); 
 		    String appName="";
 		    //String shortSearch="";
 		    StringBuilder shortSearchSB=new StringBuilder();
@@ -55,49 +55,149 @@ ArrayList<App> theList=new ArrayList<App>();
 			
 		}
 	}
-	ArrayList<App> findApp(String searchString, int maxResults)
+	ArrayList<App> findApp(String searchString, int maxResults, int perKeyWordResults)
 	{
 		ArrayList<App> returnList=new ArrayList<App>();
 		String[] keyWords=searchString.split(" ");
-		boolean breakout=false;
+		int[] keyWordOccurrences = new int[keyWords.length];
+		
+		//ArrayList[] listsForKeyWords = new ArrayList[keyWords.length];
+		
+		//for (int i=0; i<=listsForKeyWords.length;i++){
+		//	listsForKeyWords[i] = new ArrayList<App>();
+		//}
+		
+		
+		int kwi=0;
+		boolean breakout = false;
 		for (App a:theList)
-		{
-			if (breakout)
-			{
+		{	
+			
+			if (breakout){
 				break;
 			}
+			
+			
+			
 			a.relevance=0;
+			boolean resultFound = false;
 			for(String s:keyWords)
 			{
-				if (a.name.toLowerCase().contains(s.toLowerCase()))
-				{
-					a.relevance+=4;
-				}
-				else //only if not found in the name
-				{
-					if(a.shortSearch.toLowerCase().contains(s.toLowerCase()))
+				
+				
+				
+				
+				kwi = 0;
+				
+				
+				for (;kwi <keyWords.length;kwi++){
+					if (keyWords[kwi].equals(s)){
+						break;}
+				}	
+				
+				System.out.println("kwi is " + kwi + " number of results at this kwi is " + keyWordOccurrences[kwi] + "(" + keyWords[kwi] + ")");//debug
+				
+				System.out.println(keyWordOccurrences[kwi] + "<" + perKeyWordResults);//debug
+				if (keyWordOccurrences[kwi] < perKeyWordResults){
+				
+					resultFound = false;
+				
+					if (a.name.toLowerCase().contains(s.toLowerCase()))
 					{
-						a.relevance+=2;
+						a.relevance+=4;
+						resultFound = true;
+						System.out.println(">->>result found !<<-<"); //debug
 					}
+					else //only if not found in the name
+					{
+						if(a.shortSearch.toLowerCase().contains(s.toLowerCase()))
+						{
+							a.relevance+=2;
+							resultFound = true;
+							System.out.println(">->>result found !<<-<");//debug
+
+						}
 						
+					}
+				
+				
+				
+					if(resultFound){
+				
+						keyWordOccurrences[kwi]++;
+						System.out.println("incrementing kwo at kwi=" + kwi + " by 1 to "+ keyWordOccurrences[kwi]);//debug
+						//Note : this means that one app can increment multiple keyword occurrences. I am unsure if this
+						//is the intended behavior, and rewriting the code to prevent this may be complicated.
+					}
+				
 				}
 			}
-			if(a.relevance!=0)
+			
+			
+			
+			
+			
+			
+			//checking whether there are not too many results for particular kwi not needed here (I hope).
+			//The app will stay at relevance = 0 if none of the kwos let it through.
+			if(a.relevance!=0) 
 			{
 				if (!returnList.contains(a))
 				{
 					returnList.add(a);
 				}
-				if(returnList.size()>=maxResults)
-				{
-					breakout=true;
-					break;
-				}
+				
+				
+				
+				
+				
 			}
+			
+			//check whether there are any kwos that still have space left, if not, breakout.
+			int filledKeyWords = 0;
+			for (int i = 0; i<keyWordOccurrences.length;i++){
+				
+				if(keyWordOccurrences[i]>=perKeyWordResults){
+					filledKeyWords++;
+				}
+				
+			}
+			
+			if (filledKeyWords == (keyWordOccurrences.length - 1)){
+				breakout = true;
+			}
+			
+			
+			
 		}
+		
+		
+		
+		
 		//TODO: Sort here
-		Collections.sort(returnList,new relevanceComparator());
-		return returnList;
+		relevanceComparator compie = new relevanceComparator();
+		Collections.sort(returnList,compie);
+		
+		ArrayList<App> trimmedReturnList=new ArrayList<App>();
+		
+		int afterTrim;
+		
+		if (returnList.size()<maxResults){
+			afterTrim = returnList.size();
+		}
+		else
+		{
+			afterTrim = maxResults;
+		}
+		
+		for(int i=0;i<afterTrim; i++){
+			trimmedReturnList.add(returnList.get(i));
+		}
+		
+		
+		Collections.sort(trimmedReturnList, compie); //not completely sure if necessary
+		
+		return trimmedReturnList;
 	}
 	private class relevanceComparator implements Comparator<App>
 	{
