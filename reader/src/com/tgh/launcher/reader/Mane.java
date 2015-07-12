@@ -25,7 +25,7 @@ public class Mane {
 		
 		while(scan.hasNext())
 		{
-			results=al.findApp(scan.next(), 100);
+			results=al.findApp(scan.next(), 10, 5);
 			
 			
 			for(App a:results)

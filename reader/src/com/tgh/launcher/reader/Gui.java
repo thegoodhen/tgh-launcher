@@ -102,7 +102,7 @@ public class Gui {
 	public void updateSearchResults()
 	{
 		
-		results=al.findApp(textField.getText(), 100);
+		results=al.findApp(textField.getText(), 5, 10);
 		
 		String lineSep = System.getProperty("line.separator");
 		System.out.print(lineSep);
