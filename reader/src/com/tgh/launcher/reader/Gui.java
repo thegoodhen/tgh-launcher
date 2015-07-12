@@ -6,6 +6,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import java.awt.Window.Type;
 import java.awt.FlowLayout;
+import java.awt.GraphicsDevice;
+import java.awt.Insets;
+
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -64,9 +67,16 @@ public class Gui {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setType(Type.UTILITY);
-		frame.setBounds(100, 100, 200, 50);
+		frame.setUndecorated(true);
+		
+		GraphicsDevice screen = frame.getGraphicsConfiguration().getDevice(); //this should return the screen on which the window is open. http://stackoverflow.com/questions/6322627/java-toolkit-getting-second-screen-size
+		int width = screen.getDisplayMode().getWidth();
+		int height = screen.getDisplayMode().getHeight()/16; //not important, frame.pack() resizes after each btnLaunch add
+		
+		frame.setBounds(0, 0, width, height);
+		frame.setAlwaysOnTop(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		frame.getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 3));
 	
 		textField = new JTextField();
 		textField.getDocument().addDocumentListener(new DocumentListener() {
@@ -101,9 +111,11 @@ public class Gui {
 			System.out.println(a.name+" "+a.relevance);
 			
 			JButton btnLaunch = new JButton(a.name); //add a.relevance to text ? seems irrelevant
+			btnLaunch.setMargin(new Insets(5,0,5,0));
+			
 			btnLaunch.addActionListener(new ActionListener(){
 					@Override
-					public void actionPerformed(ActionEvent e) {
+					public void actionPerformed(ActionEvent e) {						
 						String appName = ((JButton)e.getSource()).getText();
 						System.out.println("The user, in their eternal wisdom, commands me to open " + appName);
 						//TODO: actually run the app
@@ -114,7 +126,7 @@ public class Gui {
 			);
 			
 			frame.getContentPane().add(btnLaunch);
-			
+			frame.pack();
 		}
 		
 	}
