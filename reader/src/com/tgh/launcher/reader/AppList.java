@@ -74,7 +74,7 @@ ArrayList<App> theList=new ArrayList<App>();
 		boolean breakout = false;
 		for (App a:theList)
 		{	
-			
+			System.out.println("New app :" + a.name);//debug
 			if (breakout){
 				break;
 			}
@@ -85,7 +85,7 @@ ArrayList<App> theList=new ArrayList<App>();
 			boolean resultFound = false;
 			for(String s:keyWords)
 			{
-				
+				System.out.println("New keyword : " + s);//debug
 				
 				
 				
@@ -101,7 +101,9 @@ ArrayList<App> theList=new ArrayList<App>();
 				
 				System.out.println(keyWordOccurrences[kwi] + "<" + perKeyWordResults);//debug
 				if (keyWordOccurrences[kwi] < perKeyWordResults){
-				
+					
+					
+					System.out.println("now gonna evaluate");
 					resultFound = false;
 				
 					if (a.name.toLowerCase().contains(s.toLowerCase()))
@@ -138,7 +140,7 @@ ArrayList<App> theList=new ArrayList<App>();
 			
 			
 			
-			
+			System.out.println("Okay App : >" + a.name + "<, relevance : " + a.relevance);//debug
 			
 			//checking whether there are not too many results for particular kwi not needed here (I hope).
 			//The app will stay at relevance = 0 if none of the kwos let it through.
@@ -165,7 +167,7 @@ ArrayList<App> theList=new ArrayList<App>();
 				
 			}
 			
-			if (filledKeyWords == (keyWordOccurrences.length - 1)){
+			if (filledKeyWords == (keyWordOccurrences.length - 1) && filledKeyWords > 0 ){
 				breakout = true;
 			}
 			
@@ -199,7 +201,8 @@ ArrayList<App> theList=new ArrayList<App>();
 		
 		Collections.sort(trimmedReturnList, compie); //not completely sure if necessary
 		
-		return trimmedReturnList;
+		return returnList;
+		//return trimmedReturnList;
 	}
 	private class relevanceComparator implements Comparator<App>
 	{
