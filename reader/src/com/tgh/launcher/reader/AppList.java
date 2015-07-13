@@ -167,7 +167,7 @@ ArrayList<App> theList=new ArrayList<App>();
 				
 			}
 			
-			if (filledKeyWords == (keyWordOccurrences.length - 1) && filledKeyWords > 0 ){
+			if (filledKeyWords == keyWordOccurrences.length ){
 				breakout = true;
 			}
 			
