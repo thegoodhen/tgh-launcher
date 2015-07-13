@@ -68,7 +68,6 @@ ArrayList<App> theList=new ArrayList<App>();
 		//}
 		
 		
-		int kwi=0;
 		boolean breakout = false;
 		for (App a:theList)
 		{	
@@ -83,14 +82,9 @@ ArrayList<App> theList=new ArrayList<App>();
 			boolean resultFound = false;
 			for(String s:keyWords)
 			{
+				int kwi; 
 				
-				
-				
-				
-				kwi = 0;
-				
-				
-				for (;kwi <keyWords.length;kwi++){
+				for (kwi=0;kwi<keyWords.length;kwi++){
 					if (keyWords[kwi].equals(s)){
 						break;}
 				}	
@@ -146,11 +140,6 @@ ArrayList<App> theList=new ArrayList<App>();
 				{
 					returnList.add(a);
 				}
-				
-				
-				
-				
-				
 			}
 			
 			//check whether there are any kwos that still have space left, if not, breakout.
@@ -199,6 +188,9 @@ ArrayList<App> theList=new ArrayList<App>();
 		
 		return trimmedReturnList;
 	}
+
+
+	
 	private class relevanceComparator implements Comparator<App>
 	{
 
