@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.swing.JButton;
+
 public class AppList {
 int metaInfoCount;
 ArrayList<App> theList=new ArrayList<App>();
@@ -213,6 +215,9 @@ ArrayList<App> theList=new ArrayList<App>();
 				return 1;
 			return -1;//required by IDE
 		}
+		
+		
+		
 		
 	}
 	
