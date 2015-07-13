@@ -179,30 +179,17 @@ ArrayList<App> theList=new ArrayList<App>();
 		
 		
 		//TODO: Sort here
-		relevanceComparator compie = new relevanceComparator();
-		Collections.sort(returnList,compie);
+		Collections.sort(returnList,new relevanceComparator());
 		
-		ArrayList<App> trimmedReturnList=new ArrayList<App>();
+		int upperIndex = maxResults;
 		
-		int afterTrim;
-		
-		if (returnList.size()<maxResults){
-			afterTrim = returnList.size();
-		}
-		else
-		{
-			afterTrim = maxResults;
+		if (maxResults > returnList.size()){
+			upperIndex = returnList.size();
 		}
 		
-		for(int i=0;i<afterTrim; i++){
-			trimmedReturnList.add(returnList.get(i));
-		}
-		
-		
-		Collections.sort(trimmedReturnList, compie); //not completely sure if necessary
+		returnList = new ArrayList<App>(returnList.subList(0, upperIndex));
 		
 		return returnList;
-		//return trimmedReturnList;
 	}
 	private class relevanceComparator implements Comparator<App>
 	{
