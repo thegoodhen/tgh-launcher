@@ -1,5 +1,6 @@
 package com.tgh.launcher.reader;
 
+import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -28,6 +29,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -133,7 +136,25 @@ public class Gui {
 		textField.setColumns(10);
 		
 		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 3));
+	    btnsPanel.setFocusCycleRoot(true); //this forces the focus traversal to cycle inside the panel
+	    
 		frame.getContentPane().add(btnsPanel);
+
+		frame.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
+		frame.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
+		
+		frame.getContentPane().setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
+		frame.getContentPane().setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
+		
+		Set<AWTKeyStroke> fwSet = new HashSet<AWTKeyStroke>();
+		Set<AWTKeyStroke> bwSet = new HashSet<AWTKeyStroke>();
+		
+		
+		fwSet.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_L, 0));
+		bwSet.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_H, 0));
+		
+		btnsPanel.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,fwSet);
+		btnsPanel.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,bwSet);
 		
 		
 		//LaunchButton btnTest = new LaunchButton("test");
