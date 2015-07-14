@@ -1,10 +1,14 @@
 package com.tgh.launcher.reader;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import java.awt.Window.Type;
 import java.awt.FlowLayout;
 import java.awt.GraphicsDevice;
@@ -14,9 +18,12 @@ import java.awt.KeyboardFocusManager;
 import java.util.List;
 
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+
 import java.awt.event.InputMethodListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -36,8 +43,9 @@ public class Gui {
 	ArrayList<App> results=new ArrayList<App>();
 	static AppList al;
 	static boolean packed;
-	private ArrayList<JButton> existingBtns;
-	private ArrayList<JButton> oldBtns;
+	private ArrayList<LaunchButton> existingBtns;
+	private ArrayList<LaunchButton> oldBtns;
+	private JPanel btnsPanel;
 	
 	/**
 	 * Launch the application.
@@ -78,8 +86,8 @@ public class Gui {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		existingBtns=new ArrayList<JButton>();
-		oldBtns=new ArrayList<JButton>();
+		existingBtns=new ArrayList<LaunchButton>();
+		oldBtns=new ArrayList<LaunchButton>();
 		frame = new JFrame();
 		frame.setType(Type.POPUP);
 		frame.setUndecorated(true);
@@ -147,7 +155,11 @@ public class Gui {
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		
-		//JButton btnTest = new JButton("test");
+		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 3));
+		frame.getContentPane().add(btnsPanel);
+		
+		
+		//LaunchButton btnTest = new LaunchButton("test");
 		//frame.getContentPane().add(btnTest);
 	}
 	public void updateSearchResults()
@@ -158,9 +170,9 @@ public class Gui {
 		String lineSep = System.getProperty("line.separator");
 		System.out.print(lineSep);
 		
-		oldBtns = new ArrayList<JButton>(existingBtns);
+		oldBtns = new ArrayList<LaunchButton>(existingBtns);
 		
-		for(JButton b:oldBtns){
+		for(LaunchButton b:oldBtns){
 			removeBtn(b.getText());
 		}
 		
@@ -185,47 +197,30 @@ public class Gui {
 				//}
 	}
 	
-	private JButton createBtn(String btnText){
-		JButton btnLaunch = new JButton(btnText); 
-		btnLaunch.setMargin(new Insets(5,0,5,0));
-		
-		btnLaunch.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent e) {						
-					String appName = ((JButton)e.getSource()).getText(); //to be used for running the app
-					System.out.println("The user, in their eternal wisdom, commands me to open " + appName); //debug
-					
-					try {
-						Process p = Runtime.getRuntime().exec(appName);
-						System.exit(0);
-					} catch (IOException e1) {
-						System.out.println("Application launch failure");
-						e1.printStackTrace();
-					}//+" | col -b ");
-					}
-					
-				}
-		);
+	private LaunchButton createBtn(String btnText){
+		LaunchButton btnLaunch = new LaunchButton(btnText); 
+		//setup moved to ButtonLaunch(String appName)
 		return btnLaunch;
 	}
 	
 	private void addBtn(String btnText){
 		
-		JButton btnLaunch = createBtn(btnText); 
-		frame.getContentPane().add(btnLaunch);
+		LaunchButton btnLaunch = createBtn(btnText); 
+		btnsPanel.add(btnLaunch);
 		existingBtns.add(btnLaunch);
+		
 		
 	}
 	
-	private void addBtn(JButton btnLaunch){
-		frame.getContentPane().add(btnLaunch);
+	private void addBtn(LaunchButton btnLaunch){
+		btnsPanel.add(btnLaunch);
 		existingBtns.add(btnLaunch);
-		
+		System.out.println("adding btn to btnspanel");
 	}
 	
-	private JButton getBtn(String btnText){
+	private LaunchButton getBtn(String btnText){
 		
-		for(JButton b:oldBtns){
+		for(LaunchButton b:oldBtns){
 			
 			if(b.getText().equals(btnText)){
 				System.out.println("getting btn from oldbtns"); //DEBUG;
@@ -235,7 +230,7 @@ public class Gui {
 			
 		}
 		
-		for(JButton b:existingBtns){
+		for(LaunchButton b:existingBtns){
 			
 			if(b.getText().equals(btnText)){
 				return b;
@@ -249,15 +244,84 @@ public class Gui {
 
 	private void removeBtn(String btnText){
 		
-		for (JButton b:existingBtns){
+		boolean removed = false;
+		for (LaunchButton b:existingBtns){
 			if(b.getText().equals(btnText)){
-				frame.getContentPane().remove(b);
+				btnsPanel.remove(b);
 				existingBtns.remove(b);
+				removed = true;
 				break;
 			}
+			if (!removed){
 			System.out.println("Nay my lord, there is no button saying " + btnText + " for me to remove!"); //DEBUG;
 			//TODO : consider whether this should throw an exception
+			}
 		}
+		
+	}
+	
+	private class LaunchButton extends JButton{
+		String theAppName = "";
+		
+		LaunchButton(String appName){
+			super(appName);
+			
+			theAppName = appName;
+			this.setText(processAppName(theAppName));
+
+			this.setMargin(new Insets(5,0,5,0));
+			
+			this.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {						
+						System.out.println("The user, in their eternal wisdom, commands me to open " + theAppName); //debug
+						
+						try {
+							Process p = Runtime.getRuntime().exec(theAppName);
+							System.exit(0);
+						} catch (IOException e1) {
+							System.out.println("Application launch failure");
+							e1.printStackTrace();
+						}//+" | col -b ");
+						}
+						
+					}
+			
+			);
+			/**Following code taken from 
+			 * 		http://www.devx.com/DevX/Tip/31605
+			 * credits : Milan Zivkovic
+			 * Makes the button fire an actionPerformed on enter or spacebar press,
+			 * as opposed to just spacebar.
+			 * TODO: Remove spacebar triggering
+			 */
+			super.registerKeyboardAction(
+	                super.getActionForKeyStroke(
+	                        KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false)),
+	                        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
+	                        JComponent.WHEN_FOCUSED);
+	        super.registerKeyboardAction(
+	                super.getActionForKeyStroke(
+	                        KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true)),
+	                        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true),
+	                        JComponent.WHEN_FOCUSED);
+			
+			//END of borrowed code
+		}
+		
+		String processAppName(String appNameToProcess){
+			// method stub for future shortening / whatever of the appName before displaying
+			return appNameToProcess;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 	}
 }
