@@ -122,17 +122,15 @@ public class Gui {
 		        		return true;
 		        	}
 		        	
-		        	try{
+		        	if (existingBtns.size()>=2){
 		        		existingBtns.get(1).requestFocusInWindow(); //set focus to 2nd button
 		        		return true;
 		        	}
-		        	catch(Exception mrUnimportnant){}
 		        	
-		        	try{
+		        	if (existingBtns.size()==1){
 		        		existingBtns.get(0).requestFocusInWindow(); //set focus to 1st button
 		        		return true;
 		        	}
-		        	catch(Exception mrsUnimportnant){}
 		        	
 		        	return true; // if textfield has focus and there are no buttons, do nothing
 		        
@@ -190,6 +188,8 @@ public class Gui {
 	    
 		frame.getContentPane().add(btnsPanel);
 
+		
+		//following 4 statements are to suppress normal tab behavior
 		frame.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		frame.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		
