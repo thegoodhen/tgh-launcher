@@ -109,9 +109,36 @@ public class Gui {
 		//Custom dispatcher
 		class KeyDispatcher implements KeyEventDispatcher {
 		    public boolean dispatchKeyEvent(KeyEvent e) {
-		        if(e.getKeyCode()==KeyEvent.VK_ESCAPE)
+		        if(e.getKeyCode()==KeyEvent.VK_ESCAPE){
 		        	System.exit(0);
-		        //Allow the event to be redispatched
+		        
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==KeyEvent.VK_TAB){
+		        	
+		        	
+		        	if(!textField.hasFocus()){
+		        		textField.requestFocusInWindow(); //set focus to textfield
+		        		return true;
+		        	}
+		        	
+		        	try{
+		        		existingBtns.get(1).requestFocusInWindow(); //set focus to 2nd button
+		        		return true;
+		        	}
+		        	catch(Exception mrUnimportnant){}
+		        	
+		        	try{
+		        		existingBtns.get(0).requestFocusInWindow(); //set focus to 1st button
+		        		return true;
+		        	}
+		        	catch(Exception mrsUnimportnant){}
+		        	
+		        	return true; // if textfield has focus and there are no buttons, do nothing
+		        
+		        }
+		        
+		      //Allow the event to be redispatched
 		        return false;
 		    }
 		}
@@ -216,6 +243,7 @@ public class Gui {
 			frame.pack();
 			//packed = true;
 				//}
+			
 	}
 	
 	private LaunchButton createBtn(String btnText){
