@@ -14,6 +14,7 @@ import java.awt.Window.Type;
 import java.awt.FlowLayout;
 import java.awt.GraphicsDevice;
 import java.awt.Insets;
+import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import java.awt.event.InputMethodListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +94,6 @@ public class Gui {
 		frame = new JFrame();
 		frame.setType(Type.POPUP);
 		frame.setUndecorated(true);
-		
 		GraphicsDevice screen = frame.getGraphicsConfiguration().getDevice(); //this should return the screen on which the window is open. http://stackoverflow.com/questions/6322627/java-toolkit-getting-second-screen-size
 		int width = screen.getDisplayMode().getWidth();
 		int height = screen.getDisplayMode().getHeight()/16; //not important, frame.pack() resizes after each btnLaunch add
@@ -101,9 +102,31 @@ public class Gui {
 		frame.setAlwaysOnTop(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 3));
+		
+		
+		//dispatcher code taken from http://portfolio.planetjon.ca/2011/09/16/java-global-jframe-key-listener/
+		
+		//Custom dispatcher
+		class KeyDispatcher implements KeyEventDispatcher {
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+		        if(e.getKeyCode()==KeyEvent.VK_ESCAPE)
+		        	System.exit(0);
+		        //Allow the event to be redispatched
+		        return false;
+		    }
+		}
+		
+		
+		//Hijack the keyboard manager
+		KeyboardFocusManager manager =
+		         KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher( new KeyDispatcher());
+		 
 	
 		textField = new JTextField();
+			
 		textField.getDocument().addDocumentListener(new DocumentListener() {
+
 			  public void changedUpdate(DocumentEvent e) {
 				  	  updateSearchResults();
 				  }
