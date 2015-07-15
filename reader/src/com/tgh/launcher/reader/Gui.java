@@ -217,9 +217,7 @@ public class Gui {
 		
 		results=al.findApp(textField.getText(), 5, 10);
 		
-		String lineSep = System.getProperty("line.separator");
-		System.out.print(lineSep);
-		System.out.println(a.name+" "+a.relevance);//TODO: move into the correct loop
+		
 		
 		
 		//oldBtns = new ArrayList<LaunchButton>(existingBtns);
@@ -231,7 +229,10 @@ public class Gui {
 		else if(existingBtns.size()<results.size()){
 			//we need new buttons here.
 			for (int neededBtns = results.size() - existingBtns.size();neededBtns>0;neededBtns--){
-				existingBtns.add(new LaunchButton());
+				LaunchButton butt = new LaunchButton();
+				existingBtns.add(butt);
+				btnsPanel.add(butt);
+				System.out.println("adding a new button ! needed btns left : " + (neededBtns -1));
 				/*Since buttons generated here do not get added to shownBtns, they will likely be unnecessarily
 				 * set to visible in following code even though they need not be. I decided to keep it that way,
 				 * since it would likely be annoying to handle.
@@ -243,6 +244,7 @@ public class Gui {
 		//show or hide buttons
 		int visibleDiff = (shownBtns - results.size()); //number of btns currently shown - number of btns that will be needed.
 		
+		System.out.print("Visiblediff is " + visibleDiff);
 		if(visibleDiff == 0){
 			//all is okay
 		}
@@ -268,6 +270,17 @@ public class Gui {
 		
 		shownBtns = results.size();
 		
+		for (int i=0;i<shownBtns;i++){
+			App a = results.get(i);
+			String lineSep = System.getProperty("line.separator");
+			System.out.print(lineSep);
+			System.out.println(a.name+" "+a.relevance);
+			
+			existingBtns.get(i).changeText(a.name);
+			
+		}
+		
+		
 		//if(!packed){	//the if needs to be removed when multiple lines of buttons become a thing.
 			frame.pack();
 			//packed = true;
@@ -275,69 +288,6 @@ public class Gui {
 			
 	}
 
-	
-	private LaunchButton createBtn(String btnText){
-		LaunchButton btnLaunch = new LaunchButton(btnText); 
-		//setup moved to ButtonLaunch(String appName)
-		return btnLaunch;
-	}
-	
-	private void addBtn(String btnText){
-		
-		LaunchButton btnLaunch = createBtn(btnText); 
-		btnsPanel.add(btnLaunch);
-		existingBtns.add(btnLaunch);
-		
-		
-	}
-	
-	private void addBtn(LaunchButton btnLaunch){
-		btnsPanel.add(btnLaunch);
-		existingBtns.add(btnLaunch);
-		System.out.println("adding btn to btnspanel");
-	}
-	
-	private LaunchButton getBtn(String btnText){
-		
-		for(LaunchButton b:oldBtns){
-			
-			if(b.getText().equals(btnText)){
-				System.out.println("getting btn from oldbtns"); //DEBUG;
-				return b;
-				
-			}
-			
-		}
-		
-		for(LaunchButton b:existingBtns){
-			
-			if(b.getText().equals(btnText)){
-				return b;
-			}
-			
-		}
-		
-		return createBtn(btnText);
-		
-	}
-
-	private void removeBtn(String btnText){
-		
-		boolean removed = false;
-		for (LaunchButton b:existingBtns){
-			if(b.getText().equals(btnText)){
-				btnsPanel.remove(b);
-				existingBtns.remove(b);
-				removed = true;
-				break;
-			}
-			if (!removed){
-			System.out.println("Nay my lord, there is no button saying " + btnText + " for me to remove!"); //DEBUG;
-			//TODO : consider whether this should throw an exception
-			}
-		}
-		
-	}
 	
 	private class LaunchButton extends JButton{
 		String theAppName = "";
