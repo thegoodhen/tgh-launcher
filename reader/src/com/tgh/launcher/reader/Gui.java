@@ -49,6 +49,7 @@ public class Gui {
 	private ArrayList<LaunchButton> existingBtns;
 	private ArrayList<LaunchButton> oldBtns;
 	private JPanel btnsPanel;
+	private int shownBtns;
 	
 	/**
 	 * Launch the application.
@@ -184,6 +185,7 @@ public class Gui {
 		textField.setColumns(10);
 		
 		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 3));
+		shownBtns = 0;
 	    btnsPanel.setFocusCycleRoot(true); //this forces the focus traversal to cycle inside the panel
 	    
 		frame.getContentPane().add(btnsPanel);
@@ -217,27 +219,54 @@ public class Gui {
 		
 		String lineSep = System.getProperty("line.separator");
 		System.out.print(lineSep);
+		System.out.println(a.name+" "+a.relevance);//TODO: move into the correct loop
 		
-		oldBtns = new ArrayList<LaunchButton>(existingBtns);
 		
-		for(LaunchButton b:oldBtns){
-			removeBtn(b.getText());
+		//oldBtns = new ArrayList<LaunchButton>(existingBtns);
+		
+		//check if enough buttons really exist
+		if(existingBtns.size()>=results.size()){
+			//all is well
+			}
+		else if(existingBtns.size()<results.size()){
+			//we need new buttons here.
+			for (int neededBtns = results.size() - existingBtns.size();neededBtns>0;neededBtns--){
+				existingBtns.add(new LaunchButton());
+				/*Since buttons generated here do not get added to shownBtns, they will likely be unnecessarily
+				 * set to visible in following code even though they need not be. I decided to keep it that way,
+				 * since it would likely be annoying to handle.
+				 */
+			}
+			
 		}
 		
+		//show or hide buttons
+		int visibleDiff = (shownBtns - results.size()); //number of btns currently shown - number of btns that will be needed.
 		
-		
-		
-		for(App a:results)
-		{
-			System.out.println(a.name+" "+a.relevance);
+		if(visibleDiff == 0){
+			//all is okay
+		}
+		else if(visibleDiff < 0){ 
+			//not enough shown btns
 			
-			addBtn(getBtn(a.name));
+			int lastVisibleIndex = shownBtns - 1; // ! arraylist is zero-based 
 			
+			for(int i = - visibleDiff;i>0;i--){
+				existingBtns.get(lastVisibleIndex+i).setVisible(true);
+			}	
+		}
+		else if(visibleDiff > 0){
+			//too many btns showing
 			
+			int lastVisibleIndexTarget = results.size() - 1; // ! arraylist is zero-based 
 			
-			
+			for(int i = visibleDiff;i>0;i--){
+				existingBtns.get(lastVisibleIndexTarget+i).setVisible(false);
+			}
 			
 		}
+		
+		shownBtns = results.size();
 		
 		//if(!packed){	//the if needs to be removed when multiple lines of buttons become a thing.
 			frame.pack();
@@ -245,6 +274,7 @@ public class Gui {
 				//}
 			
 	}
+
 	
 	private LaunchButton createBtn(String btnText){
 		LaunchButton btnLaunch = new LaunchButton(btnText); 
@@ -312,11 +342,14 @@ public class Gui {
 	private class LaunchButton extends JButton{
 		String theAppName = "";
 		
-		LaunchButton(String appName){
-			super(appName);
-			
-			theAppName = appName;
+		public void changeText(String fullAppName){
+			theAppName = fullAppName;
 			this.setText(processAppName(theAppName));
+		}
+		
+		LaunchButton(){
+			super("");
+			
 
 			this.setMargin(new Insets(5,0,5,0));
 			
