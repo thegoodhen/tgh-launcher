@@ -2,6 +2,7 @@ package com.tgh.launcher.reader;
 
 import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Event;
@@ -97,13 +98,12 @@ public class Gui {
 		frame.setUndecorated(true);
 		GraphicsDevice screen = frame.getGraphicsConfiguration().getDevice(); //this should return the screen on which the window is open. http://stackoverflow.com/questions/6322627/java-toolkit-getting-second-screen-size
 		int width = screen.getDisplayMode().getWidth();
-		int height = screen.getDisplayMode().getHeight()/16; //not important, frame.pack() resizes after each btnLaunch add
+		//int height = screen.getDisplayMode().getHeight()/16; //not important, frame.pack() resizes after each btnLaunch add
 		
-		frame.setBounds(0, 0, width, height);
 		frame.setAlwaysOnTop(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 3));
-		
+		frame.getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+		frame.getContentPane().setBackground(Color.pink); //TODO : Add Pinkie Pie cutie mark
 		
 		//dispatcher code taken from http://portfolio.planetjon.ca/2011/09/16/java-global-jframe-key-listener/
 		
@@ -184,7 +184,7 @@ public class Gui {
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		
-		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 3));
+		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		shownBtns = 0;
 	    btnsPanel.setFocusCycleRoot(true); //this forces the focus traversal to cycle inside the panel
 	    
@@ -208,6 +208,15 @@ public class Gui {
 		btnsPanel.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,fwSet);
 		btnsPanel.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,bwSet);
 		
+		LaunchButton vanguard = new LaunchButton();
+		btnsPanel.add(vanguard); //added so that frame.pack gets correct height. Can be left in,
+										   //since in most cases at least one btn will be used anyway.
+		
+		frame.pack();
+		frame.setBounds(0, 0, width, frame.getHeight());
+		frame.setResizable(false);
+		
+		vanguard.setVisible(false);
 		
 		//LaunchButton btnTest = new LaunchButton("test");
 		//frame.getContentPane().add(btnTest);
@@ -282,7 +291,7 @@ public class Gui {
 		
 		
 		//if(!packed){	//the if needs to be removed when multiple lines of buttons become a thing.
-			frame.pack();
+			//frame.pack();
 			//packed = true;
 				//}
 			
@@ -298,10 +307,10 @@ public class Gui {
 		}
 		
 		LaunchButton(){
-			super("");
+			super(" ");
 			
 
-			this.setMargin(new Insets(5,0,5,0));
+			this.setMargin(new Insets(0,0,0,0));
 			
 			this.addActionListener(new ActionListener(){
 					@Override
