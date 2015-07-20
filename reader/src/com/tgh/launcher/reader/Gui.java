@@ -55,6 +55,7 @@ public class Gui {
 	private JPanel upperPanel;
 	private JPanel btnsPanel;
 	private int shownBtns;
+	private int contextKeywordNumber;
 	
 	/**
 	 * Launch the application.
@@ -123,25 +124,65 @@ public class Gui {
 		        	
 		        	
 		        	if(!textField.hasFocus()){
-		        		textField.requestFocusInWindow(); //set focus to textfield
+		        		System.out.println("requesting focus for textfield"); //debug
 		        		
-		        	}
+		        		textField.requestFocusInWindow(); //set focus to textfield
+		        		updateContext();
+			        	return true;
+			        	}
 		        	
 		        	if (existingBtns.size()>=2){
-		        		existingBtns.get(1).requestFocusInWindow(); //set focus to 2nd button
+		        		System.out.println("requesting focus for 2nd butt"); //debug
 		        		
+		        		existingBtns.get(1).requestFocusInWindow(); //set focus to 2nd button
+		        		updateContext();
+			        	return true; 
 		        	}
 		        	
 		        	if (existingBtns.size()==1){
-		        		existingBtns.get(0).requestFocusInWindow(); //set focus to 1st button
+		        		System.out.println("requesting focus for 1st butt"); //debug
 		        		
+		        		existingBtns.get(0).requestFocusInWindow(); //set focus to 1st button
+		        		updateContext();
+			        	return true; 
 		        	}
 		        	
-		        	updateContext("free");
 		        	
 		        	
+		        	updateContext();
 		        	return true; // if textfield has focus and there are no buttons, do nothing
 		        
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==KeyEvent.VK_J){
+		        	
+		        	if(!textField.hasFocus()){
+		        		if (contextKeywordNumber >=1){
+		        			contextKeywordNumber--;
+		        			updateContext();
+		        			return true;
+		        		}
+		        	}
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==KeyEvent.VK_K){
+		        	if(!textField.hasFocus()){
+		        		contextKeywordNumber++;
+		        		updateContext();
+		        		return true;
+		        	}
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_RELEASED && e.getKeyCode()==KeyEvent.VK_H){
+		        	if(!textField.hasFocus()){
+	        		updateContext();
+		        	}
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_RELEASED && e.getKeyCode()==KeyEvent.VK_L){
+		        	if(!textField.hasFocus()){
+	        		updateContext();
+		        	}
 		        }
 		        
 		      //Allow the event to be redispatched
@@ -157,7 +198,8 @@ public class Gui {
 		 
 	
 		textField = new JTextField();
-			
+		contextKeywordNumber = 0;	
+		
 		textField.getDocument().addDocumentListener(new DocumentListener() {
 
 			  public void changedUpdate(DocumentEvent e) {
@@ -228,10 +270,10 @@ public class Gui {
 				"The real problem is not whether machines think, but whether men do.",
 				"It had to answer question ancient, using a little demonstration...",
 				"Any sufficiently advanced technology is indistinguishable from magic.",
-				"It is often said that before you die your life passes before your eyes. It's called living.",
+				"It is often said that before you die your life passes before your eyes. It is actually true. It's called living.",
 				"Real stupidity beats artificial intelligence every time.",
 				"Always be wary of any helpful item that weighs less than its operating manual.",
-				"GNU PTerry"};
+				"GNU PTerry", "I would like to be a tree."};
 		
 		
 		Random rand = new Random();
@@ -322,6 +364,7 @@ public class Gui {
 		}
 		
 		
+		updateContext();
 		//if(!packed){	//the if needs to be removed when multiple lines of buttons become a thing.
 			//frame.pack();
 			//packed = true;
@@ -330,28 +373,42 @@ public class Gui {
 		
 	}
 	
-	public void updateContext(String keyWord){
+	public void updateContext(){
+		System.out.println("Updating context. number = " + contextKeywordNumber); //debug
 		
 		if (shownBtns == 0){ 
 			contextField.setText("");
 			return;
 		}
 		
+		String[] searchKeywords = textField.getText().split(" ");
+		
+		if (contextKeywordNumber>searchKeywords.length-1){
+			contextKeywordNumber = searchKeywords.length-1;
+		}
+		
+		String keyWord = searchKeywords[contextKeywordNumber];
+		
 		int wordsBefore = 2+1; //TODO : load this (2,3) from settings
 		int wordsAfter = 3+1;
 		
-		LaunchButton activeBtn = existingBtns.get(0);
-		
+		LaunchButton activeBtn = new LaunchButton();
+		if (textField.hasFocus()){
+		activeBtn = existingBtns.get(0);
+		}
 		if (!textField.hasFocus()){
 			for (LaunchButton b:existingBtns){
 				if (b.hasFocus()){
 					activeBtn = b;
+					
 				}
 			}
 		}
-
+		
+		System.out.println("Found active button ! " + activeBtn.getText()); //debug
 		String shortSearch = activeBtn.app.shortSearch;
-		int keyWordStart = shortSearch.toLowerCase().indexOf(keyWord); //TODO : consider whether be a masochist and 
+		int keyWordStart = shortSearch.toLowerCase().indexOf(keyWord); //TODO : consider whether to be a masochist and support multiple occurrences
+		//of keyword. Bwah.
 		
 		if (keyWordStart == -1){
 			contextField.setText(activeBtn.app.name + " : Keyword " + keyWord + " not found in description.");
@@ -380,7 +437,7 @@ public class Gui {
 			if (wordsAfter == 0){break;}
 		}
 		
-		contextField.setText(activeBtn.app.name + " : " + shortSearch.substring(lowIndex, highIndex));
+		contextField.setText(activeBtn.app.name + "("+keyWord+")" +" : " + shortSearch.substring(lowIndex, highIndex));
 		
 		
 	}
