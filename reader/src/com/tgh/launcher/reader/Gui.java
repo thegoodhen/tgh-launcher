@@ -189,6 +189,9 @@ public class Gui {
 		frame.getContentPane().add(btnsPanel);
 
 		
+		frame.toFront();
+		frame.requestFocus();	
+		
 		//following 4 statements are to suppress normal tab behavior
 		frame.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		frame.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
@@ -314,11 +317,11 @@ public class Gui {
 		
 		LaunchButton(String appName){
 			super(appName);
-			
+
 			theAppName = appName;
 			this.setText(processAppName(theAppName));
 
-			this.setMargin(new Insets(5,0,5,0));
+			this.setMargin(new Insets(0,0,0,0));
 			
 			this.addActionListener(new ActionListener(){
 					@Override
@@ -343,6 +346,7 @@ public class Gui {
 			 * Makes the button fire an actionPerformed on enter or spacebar press,
 			 * as opposed to just spacebar.
 			 * TODO: Remove spacebar triggering
+			 * REM: Please don't. Spacebar is more accessible than enter.
 			 */
 			super.registerKeyboardAction(
 	                super.getActionForKeyStroke(
