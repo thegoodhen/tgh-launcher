@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Random;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputMethodEvent;
@@ -43,12 +45,14 @@ public class Gui {
 
 	private JFrame frame;
 	private JTextField textField;
+	private JTextField contextField;
 	static File guiFile;
 	ArrayList<App> results=new ArrayList<App>();
 	static AppList al;
 	static boolean packed;
 	private ArrayList<LaunchButton> existingBtns;
 	private ArrayList<LaunchButton> oldBtns;
+	private JPanel upperPanel;
 	private JPanel btnsPanel;
 	private int shownBtns;
 	
@@ -102,7 +106,7 @@ public class Gui {
 		
 		frame.setAlwaysOnTop(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(),BoxLayout.Y_AXIS));
 		frame.getContentPane().setBackground(Color.pink); //TODO : Add Pinkie Pie cutie mark
 		
 		//dispatcher code taken from http://portfolio.planetjon.ca/2011/09/16/java-global-jframe-key-listener/
@@ -120,18 +124,21 @@ public class Gui {
 		        	
 		        	if(!textField.hasFocus()){
 		        		textField.requestFocusInWindow(); //set focus to textfield
-		        		return true;
+		        		
 		        	}
 		        	
 		        	if (existingBtns.size()>=2){
 		        		existingBtns.get(1).requestFocusInWindow(); //set focus to 2nd button
-		        		return true;
+		        		
 		        	}
 		        	
 		        	if (existingBtns.size()==1){
 		        		existingBtns.get(0).requestFocusInWindow(); //set focus to 1st button
-		        		return true;
+		        		
 		        	}
+		        	
+		        	updateContext("free");
+		        	
 		        	
 		        	return true; // if textfield has focus and there are no buttons, do nothing
 		        
@@ -178,25 +185,32 @@ public class Gui {
 		});
 		
 				
+		upperPanel = new JPanel();
+		frame.getContentPane().add(upperPanel);
+		upperPanel.setBackground(upperPanel.getParent().getBackground());
 		
-				
 		
-		frame.getContentPane().add(textField);
+		upperPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+		
+		upperPanel.add(textField);
+		
 		textField.setColumns(10);
 		
 		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		shownBtns = 0;
 	    btnsPanel.setFocusCycleRoot(true); //this forces the focus traversal to cycle inside the panel
 	    
-		frame.getContentPane().add(btnsPanel);
-
+		upperPanel.add(btnsPanel);
+		btnsPanel.setBackground(btnsPanel.getParent().getBackground());
+	    
 		
-		//following 4 statements are to suppress normal tab behavior
+		// suppress normal tab behavior
 		frame.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		frame.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		
 		frame.getContentPane().setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		frame.getContentPane().setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
+		// end of code to suppress normal tab behavior
 		
 		Set<AWTKeyStroke> fwSet = new HashSet<AWTKeyStroke>();
 		Set<AWTKeyStroke> bwSet = new HashSet<AWTKeyStroke>();
@@ -208,9 +222,31 @@ public class Gui {
 		btnsPanel.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,fwSet);
 		btnsPanel.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,bwSet);
 		
+		String[] wordsArray = {"Which was first - the egg, or the chicken ?","RegExs are evil.",
+				"Live as if you were to die tommorow. Learn as if you  were to live forever.",
+				"Never trust a computer you can't throw out of a window.",
+				"The real problem is not whether machines think, but whether men do.",
+				"It had to answer question ancient, using a little demonstration...",
+				"Any sufficiently advanced technology is indistinguishable from magic.",
+				"It is often said that before you die your life passes before your eyes. It's called living.",
+				"Real stupidity beats artificial intelligence every time.",
+				"Always be wary of any helpful item that weighs less than its operating manual.",
+				"GNU PTerry"};
+		
+		
+		Random rand = new Random();
+		String words = wordsArray[rand.nextInt(wordsArray.length-1)];
+		contextField = new JTextField("Welcome. " + words);
+		
+		frame.getContentPane().add(contextField);
+		
+		contextField.setEditable(false);
+		
+		
 		LaunchButton vanguard = new LaunchButton();
 		btnsPanel.add(vanguard); //added so that frame.pack gets correct height. Can be left in,
 										   //since in most cases at least one btn will be used anyway.
+		existingBtns.add(vanguard);
 		
 		frame.pack();
 		frame.setBounds(0, 0, width, frame.getHeight());
@@ -232,10 +268,8 @@ public class Gui {
 		//oldBtns = new ArrayList<LaunchButton>(existingBtns);
 		
 		//check if enough buttons really exist
-		if(existingBtns.size()>=results.size()){
-			//all is well
-			}
-		else if(existingBtns.size()<results.size()){
+		
+		if(existingBtns.size()<results.size()){
 			//we need new buttons here.
 			for (int neededBtns = results.size() - existingBtns.size();neededBtns>0;neededBtns--){
 				LaunchButton butt = new LaunchButton();
@@ -253,11 +287,8 @@ public class Gui {
 		//show or hide buttons
 		int visibleDiff = (shownBtns - results.size()); //number of btns currently shown - number of btns that will be needed.
 		
-		System.out.print("Visiblediff is " + visibleDiff);
-		if(visibleDiff == 0){
-			//all is okay
-		}
-		else if(visibleDiff < 0){ 
+		System.out.print("Visiblediff is " + visibleDiff); //DEBUG
+		if(visibleDiff < 0){ 
 			//not enough shown btns
 			
 			int lastVisibleIndex = shownBtns - 1; // ! arraylist is zero-based 
@@ -279,6 +310,7 @@ public class Gui {
 		
 		shownBtns = results.size();
 		
+		//set correct button texts
 		for (int i=0;i<shownBtns;i++){
 			App a = results.get(i);
 			String lineSep = System.getProperty("line.separator");
@@ -286,7 +318,7 @@ public class Gui {
 			System.out.println(a.name+" "+a.relevance);
 			
 			existingBtns.get(i).changeText(a.name);
-			
+			existingBtns.get(i).app = a;
 		}
 		
 		
@@ -295,11 +327,67 @@ public class Gui {
 			//packed = true;
 				//}
 			
+		
 	}
+	
+	public void updateContext(String keyWord){
+		
+		if (shownBtns == 0){ 
+			contextField.setText("");
+			return;
+		}
+		
+		int wordsBefore = 2+1; //TODO : load this (2,3) from settings
+		int wordsAfter = 3+1;
+		
+		LaunchButton activeBtn = existingBtns.get(0);
+		
+		if (!textField.hasFocus()){
+			for (LaunchButton b:existingBtns){
+				if (b.hasFocus()){
+					activeBtn = b;
+				}
+			}
+		}
 
+		String shortSearch = activeBtn.app.shortSearch;
+		int keyWordStart = shortSearch.toLowerCase().indexOf(keyWord); //TODO : consider whether be a masochist and 
+		
+		if (keyWordStart == -1){
+			contextField.setText(activeBtn.app.name + " : Keyword " + keyWord + " not found in description.");
+			return;
+		}
+		
+		int lowIndex = keyWordStart; 
+		int highIndex = keyWordStart;
+		
+		for (;lowIndex > 0;lowIndex --){ //silly for declaration to make sure lowIndex is visible further on.
+			
+			if(shortSearch.charAt(lowIndex)==" ".charAt(0)){
+				wordsBefore --;
+			}
+			
+			if (wordsBefore == 0){break;}
+			
+		}
+		
+		for (int length=shortSearch.length()-1;highIndex < length;highIndex ++){ 
+			
+			if(shortSearch.charAt(highIndex)==" ".charAt(0)){
+				wordsAfter --;
+			}
+
+			if (wordsAfter == 0){break;}
+		}
+		
+		contextField.setText(activeBtn.app.name + " : " + shortSearch.substring(lowIndex, highIndex));
+		
+		
+	}
 	
 	private class LaunchButton extends JButton{
 		String theAppName = "";
+		public App app;  //TODO : perhaps change redundant variables into references via app
 		
 		public void changeText(String fullAppName){
 			theAppName = fullAppName;
@@ -308,7 +396,7 @@ public class Gui {
 		
 		LaunchButton(){
 			super(" ");
-			
+			//app = new App("defaultN","defaultS"); probably redundant
 
 			this.setMargin(new Insets(0,0,0,0));
 			
