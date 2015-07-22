@@ -436,6 +436,10 @@ public class Gui {
 		int lowIndex = keyWordStart; 
 		int highIndex = keyWordStart;
 		
+		
+		shortSearch = shortSearch.replaceAll("\\s+", " "); //<---this code taken from here http://stackoverflow.com/questions/3958955/how-to-remove-duplicate-white-spaces-in-string-using-java
+		
+		System.out.println(shortSearch);
 		for (;lowIndex > 0;lowIndex --){ //silly for declaration to make sure lowIndex is visible further on.
 			
 			if(shortSearch.charAt(lowIndex)==" ".charAt(0)){
@@ -446,7 +450,7 @@ public class Gui {
 			
 		}
 		
-		for (int length=shortSearch.length()-1;highIndex < length;highIndex ++){ 
+		for (int length=shortSearch.length()-1;highIndex <= length;highIndex ++){ 
 			
 			if(shortSearch.charAt(highIndex)==" ".charAt(0)){
 				wordsAfter --;
