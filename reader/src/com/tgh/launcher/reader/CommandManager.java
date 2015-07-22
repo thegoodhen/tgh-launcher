@@ -6,44 +6,110 @@ import java.util.regex.Pattern;
 public class CommandManager {
 
 			  enum possibleTask{get, toggle, set, unset, assign};
-	public static void handleCommand(String cmd)
-	{
-		  Pattern pattern = Pattern.compile("^set\\s+(no)*([^!]*?)(\\??)(!?)\\s*?(=?)\\s*?([.&&[^!\\?=]]*?)$");
-		  Matcher matcher = pattern.matcher(cmd);
-		  if(matcher.find())
-		  {	  
-			  possibleTask whatToDo;
-			  System.out.println("ují ují kokodák");
-			  String variable=matcher.group(2);
-			  if(matcher.group(3).equals("?"))
-			  {
-				  whatToDo=possibleTask.get;
-			  }
-			  if(matcher.group(4).equals("!"))
-			  {
-				  whatToDo=possibleTask.toggle;
-			  }
-			  if(matcher.group(5).equals("="))
-			  {
-				  whatToDo=possibleTask.assign;
-			  }
-			  else
-				  if(matcher.group(1).equals("no"))
-				  {
-					  whatToDo=possibleTask.unset;
-				  }
-				  else
-				  {
-					  whatToDo=possibleTask.set;
-				  }
-			  String value=matcher.group(6);
+	static Pattern assignPattern;
+	static Pattern togglePattern;
+	static Pattern getPattern;
+	static Pattern unsetPattern;
+	static Pattern setPattern;
 
-		  System.out.println("var: "+variable);
-		  System.out.println("val: "+value);
-		  }
+	public static void temCommandManager()
+	{
+		assignPattern=Pattern.compile("^set\\s+(.*?)\\s*=\\s*(.*?)$");
+		togglePattern=Pattern.compile("^set\\s+(.*?)\\s*!\\s*$");
+		getPattern=Pattern.compile("^set\\s+(.*?)\\s*\\?\\s*$");
+		unsetPattern=	Pattern.compile("^set\\s+no(.*?)\\s*$");
+		setPattern=Pattern.compile("^set\\s+(.*?)\\s*$");
+	}
+	public static void handleCommand(String cmd)
+
+	{
+		String var="";
+		String val="";
+		possibleTask t = possibleTask.set;
+		Matcher assignMatcher=assignPattern.matcher(cmd);
+		Matcher toggleMatcher=togglePattern.matcher(cmd);
+		Matcher getMatcher=getPattern.matcher(cmd);
+		Matcher unsetMatcher=unsetPattern.matcher(cmd);
+		Matcher setMatcher=setPattern.matcher(cmd);
+		if(assignMatcher.find())
+		{
+			t=possibleTask.assign;
+			var=assignMatcher.group(1);
+			val=assignMatcher.group(2);
+		}
+		else if(toggleMatcher.find())
+		{
+			t=possibleTask.toggle;
+			var=toggleMatcher.group(1);
+		}
+		else if(getMatcher.find())
+		{
+			t=possibleTask.get;
+			var=getMatcher.group(1);
+		}
+		else if(unsetMatcher.find())
+		{
+			t=possibleTask.unset;
+			var=unsetMatcher.group(1);
+		}
+		else if(setMatcher.find())
+		{
+			t=possibleTask.set;
+			var=setMatcher.group(1);
+		}
+switch(t)
+{
+case assign:
+	assign(var,val);
+	break;
+case toggle:
+	toggle(var);
+	break;
+case get:
+	get(var);//TODO: Oh snap, I need to return it somehow.
+	break;
+case set:
+	set(var,true);
+	break;
+case unset:
+	set(var,false);
+	break;
+default:
+	break;
+
+}
+		System.out.println("var: "+var);
+		System.out.println("val: "+val);
+	}
+	private static void assign(String var, String val)
+	{
+		//TODO: implement
+		System.out.println("Assigned var "+var+" a value of "+val);
+	}
+	private static void toggle(String var)
+	{
+		//TODO: implement
+		System.out.println("toggled var: "+var);
+
+	}
+	private static void set(String var, boolean on)
+	{
+		//TODO: implement
+		System.out.println("Set var "+var+" to "+on);
+	}
+
+	private static void get(String var)
+	{
+		//TODO: implement
+		System.out.println("Got var "+var);
 	}
 	public static void main(String args[])
 	{
-		handleCommand("set nopipka?=10");
+		temCommandManager();
+		handleCommand("set     nopipka");
+		handleCommand("set     pipka    ");
+		handleCommand("set     pipka!  ");
+		handleCommand("set     pipka?  ");
+		handleCommand("set     kokodak blablabla ? ! pipka?  ");//just messin' around
 	}
 }
