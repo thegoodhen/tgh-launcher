@@ -9,10 +9,12 @@ import java.awt.Event;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.awt.Window.Type;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
@@ -22,9 +24,11 @@ import java.util.List;
 
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -48,7 +52,7 @@ public class Gui {
 
 	private JFrame frame;
 	private JTextField textField;
-	private JTextField contextField;
+	private JLabel contextField;
 	static File guiFile;
 	ArrayList<App> results=new ArrayList<App>();
 	static AppList al;
@@ -61,6 +65,7 @@ public class Gui {
 	private int contextKeywordNumber;
 	private LaunchButton activeBtn;
 	private Color defColour;
+	private String greetMsg;
 	
 	/**
 	 * Launch the application.
@@ -291,11 +296,14 @@ public class Gui {
 		
 		Random rand = new Random();
 		String words = wordsArray[rand.nextInt(wordsArray.length-1)];
-		contextField = new JTextField("Welcome. " + words);
+		contextField = new JLabel(" ",SwingConstants.LEFT);
+		Font f = contextField.getFont();
+		contextField.setFont(new Font(f.getName(),Font.PLAIN,f.getSize()));
+		JPanel contextPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		frame.getContentPane().add(contextPanel);
+		contextPanel.add(contextField);
+		greetMsg = "~Welcome. " + words; //moved this to updateContext (if there are no buttons) since the font change fucked the text up
 		
-		frame.getContentPane().add(contextField);
-		
-		contextField.setEditable(false);
 		
 		
 		LaunchButton vanguard = new LaunchButton();
@@ -390,7 +398,12 @@ public class Gui {
 		System.out.println("Updating context. number = " + contextKeywordNumber); //debug
 		
 		if (shownBtns == 0){ 
-			contextField.setText("");
+			contextField.setText(greetMsg);
+			return;
+		}
+		
+		if (activeBtn==null){
+			contextField.setText("Error : Active button not found.");
 			return;
 		}
 		
@@ -407,17 +420,14 @@ public class Gui {
 		
 		
 		
-		if (activeBtn==null){
-			contextField.setText("Error : Active button not found.");
-			return;
-		}
+		
 		
 		String shortSearch = activeBtn.app.shortSearch;
 		int keyWordStart = shortSearch.toLowerCase().indexOf(keyWord); //TODO : consider whether to be a masochist and support multiple occurrences
 		//of keyword. Bwah.
 		
 		if (keyWordStart == -1){
-			contextField.setText(activeBtn.app.name + "(( : Keyword " + keyWord + " not found in description.))");
+			contextField.setText("<html><i>" + activeBtn.app.name + "(( : Keyword " + keyWord + " not found in description.))</i></html>");
 			return;
 		}
 		
@@ -443,7 +453,9 @@ public class Gui {
 			if (wordsAfter == 0){break;}
 		}
 		
-		contextField.setText(activeBtn.app.name + "["+keyWord+"]" +" : " + shortSearch.substring(lowIndex, highIndex));
+		
+		contextField.setText("<html>"+activeBtn.app.name +" : " + shortSearch.substring(lowIndex, keyWordStart) +"<font color=\"blue\"><u><b>"
+		+keyWord+"</b></u></font>"+shortSearch.substring(keyWordStart+keyWord.length(), highIndex)+"</html>");
 		
 		
 	}
