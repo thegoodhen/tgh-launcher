@@ -2,6 +2,7 @@ package com.tgh.launcher.reader;
 
 import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Event;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Random;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputMethodEvent;
@@ -42,13 +45,17 @@ public class Gui {
 
 	private JFrame frame;
 	private JTextField textField;
+	private JTextField contextField;
 	static File guiFile;
 	ArrayList<App> results=new ArrayList<App>();
 	static AppList al;
 	static boolean packed;
 	private ArrayList<LaunchButton> existingBtns;
 	private ArrayList<LaunchButton> oldBtns;
+	private JPanel upperPanel;
 	private JPanel btnsPanel;
+	private int shownBtns;
+	private int contextKeywordNumber;
 	
 	/**
 	 * Launch the application.
@@ -96,13 +103,12 @@ public class Gui {
 		frame.setUndecorated(true);
 		GraphicsDevice screen = frame.getGraphicsConfiguration().getDevice(); //this should return the screen on which the window is open. http://stackoverflow.com/questions/6322627/java-toolkit-getting-second-screen-size
 		int width = screen.getDisplayMode().getWidth();
-		int height = screen.getDisplayMode().getHeight()/16; //not important, frame.pack() resizes after each btnLaunch add
+		//int height = screen.getDisplayMode().getHeight()/16; //not important, frame.pack() resizes after each btnLaunch add
 		
-		frame.setBounds(0, 0, width, height);
 		frame.setAlwaysOnTop(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new FlowLayout(FlowLayout.LEFT, 5, 3));
-		
+		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(),BoxLayout.Y_AXIS));
+		frame.getContentPane().setBackground(Color.pink); //TODO : Add Pinkie Pie cutie mark
 		
 		//dispatcher code taken from http://portfolio.planetjon.ca/2011/09/16/java-global-jframe-key-listener/
 		
@@ -118,22 +124,65 @@ public class Gui {
 		        	
 		        	
 		        	if(!textField.hasFocus()){
+		        		System.out.println("requesting focus for textfield"); //debug
+		        		
 		        		textField.requestFocusInWindow(); //set focus to textfield
-		        		return true;
-		        	}
+		        		updateContext();
+			        	return true;
+			        	}
 		        	
 		        	if (existingBtns.size()>=2){
+		        		System.out.println("requesting focus for 2nd butt"); //debug
+		        		
 		        		existingBtns.get(1).requestFocusInWindow(); //set focus to 2nd button
-		        		return true;
+		        		updateContext();
+			        	return true; 
 		        	}
 		        	
 		        	if (existingBtns.size()==1){
+		        		System.out.println("requesting focus for 1st butt"); //debug
+		        		
 		        		existingBtns.get(0).requestFocusInWindow(); //set focus to 1st button
-		        		return true;
+		        		updateContext();
+			        	return true; 
 		        	}
 		        	
+		        	
+		        	
+		        	updateContext();
 		        	return true; // if textfield has focus and there are no buttons, do nothing
 		        
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==KeyEvent.VK_J){
+		        	
+		        	if(!textField.hasFocus()){
+		        		if (contextKeywordNumber >=1){
+		        			contextKeywordNumber--;
+		        			updateContext();
+		        			return true;
+		        		}
+		        	}
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_PRESSED && e.getKeyCode()==KeyEvent.VK_K){
+		        	if(!textField.hasFocus()){
+		        		contextKeywordNumber++;
+		        		updateContext();
+		        		return true;
+		        	}
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_RELEASED && e.getKeyCode()==KeyEvent.VK_H){
+		        	if(!textField.hasFocus()){
+	        		updateContext();
+		        	}
+		        }
+		        
+		        if(e.getID()==KeyEvent.KEY_RELEASED && e.getKeyCode()==KeyEvent.VK_L){
+		        	if(!textField.hasFocus()){
+	        		updateContext();
+		        	}
 		        }
 		        
 		      //Allow the event to be redispatched
@@ -149,7 +198,8 @@ public class Gui {
 		 
 	
 		textField = new JTextField();
-			
+		contextKeywordNumber = 0;	
+		
 		textField.getDocument().addDocumentListener(new DocumentListener() {
 
 			  public void changedUpdate(DocumentEvent e) {
@@ -177,27 +227,34 @@ public class Gui {
 		});
 		
 				
+		upperPanel = new JPanel();
+		frame.getContentPane().add(upperPanel);
+		upperPanel.setBackground(upperPanel.getParent().getBackground());
 		
-				
 		
-		frame.getContentPane().add(textField);
+		upperPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+		
+		upperPanel.add(textField);
+		
 		textField.setColumns(10);
 		
-		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 3));
+		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		shownBtns = 0;
 	    btnsPanel.setFocusCycleRoot(true); //this forces the focus traversal to cycle inside the panel
 	    
-		frame.getContentPane().add(btnsPanel);
+		upperPanel.add(btnsPanel);
+		btnsPanel.setBackground(btnsPanel.getParent().getBackground());
+	    
+		
 
 		
-		frame.toFront();
-		frame.requestFocus();	
-		
-		//following 4 statements are to suppress normal tab behavior
+		// suppress normal tab behavior
 		frame.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		frame.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		
 		frame.getContentPane().setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		frame.getContentPane().setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
+		// end of code to suppress normal tab behavior
 		
 		Set<AWTKeyStroke> fwSet = new HashSet<AWTKeyStroke>();
 		Set<AWTKeyStroke> bwSet = new HashSet<AWTKeyStroke>();
@@ -209,6 +266,37 @@ public class Gui {
 		btnsPanel.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,fwSet);
 		btnsPanel.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,bwSet);
 		
+		String[] wordsArray = {"Which was first - the egg, or the chicken ?","RegExs are evil.",
+				"Live as if you were to die tommorow. Learn as if you  were to live forever.",
+				"Never trust a computer you can't throw out of a window.",
+				"The real problem is not whether machines think, but whether men do.",
+				"It had to answer question ancient, using a little demonstration...",
+				"Any sufficiently advanced technology is indistinguishable from magic.",
+				"It is often said that before you die your life passes before your eyes. It is actually true. It's called living.",
+				"Real stupidity beats artificial intelligence every time.",
+				"Always be wary of any helpful item that weighs less than its operating manual.",
+				"GNU PTerry", "I would like to be a tree."};
+		
+		
+		Random rand = new Random();
+		String words = wordsArray[rand.nextInt(wordsArray.length-1)];
+		contextField = new JTextField("Welcome. " + words);
+		
+		frame.getContentPane().add(contextField);
+		
+		contextField.setEditable(false);
+		
+		
+		LaunchButton vanguard = new LaunchButton();
+		btnsPanel.add(vanguard); //added so that frame.pack gets correct height. Can be left in,
+										   //since in most cases at least one btn will be used anyway.
+		existingBtns.add(vanguard);
+		
+		frame.pack();
+		frame.setBounds(0, 0, width, frame.getHeight());
+		frame.setResizable(false);
+		
+		vanguard.setVisible(false);
 		
 		//LaunchButton btnTest = new LaunchButton("test");
 		//frame.getContentPane().add(btnTest);
@@ -218,108 +306,155 @@ public class Gui {
 		
 		results=al.findApp(textField.getText(), 5, 10);
 		
-		String lineSep = System.getProperty("line.separator");
-		System.out.print(lineSep);
 		
-		oldBtns = new ArrayList<LaunchButton>(existingBtns);
 		
-		for(LaunchButton b:oldBtns){
-			removeBtn(b.getText());
+		
+		//oldBtns = new ArrayList<LaunchButton>(existingBtns);
+		
+		//check if enough buttons really exist
+		
+		if(existingBtns.size()<results.size()){
+			//we need new buttons here.
+			for (int neededBtns = results.size() - existingBtns.size();neededBtns>0;neededBtns--){
+				LaunchButton butt = new LaunchButton();
+				existingBtns.add(butt);
+				btnsPanel.add(butt);
+				System.out.println("adding a new button ! needed btns left : " + (neededBtns -1));
+				/*Since buttons generated here do not get added to shownBtns, they will likely be unnecessarily
+				 * set to visible in following code even though they need not be. I decided to keep it that way,
+				 * since it would likely be annoying to handle.
+				 */
+			}
+			
 		}
 		
+		//show or hide buttons
+		int visibleDiff = (shownBtns - results.size()); //number of btns currently shown - number of btns that will be needed.
 		
+		System.out.print("Visiblediff is " + visibleDiff); //DEBUG
+		if(visibleDiff < 0){ 
+			//not enough shown btns
+			
+			int lastVisibleIndex = shownBtns - 1; // ! arraylist is zero-based 
+			
+			for(int i = - visibleDiff;i>0;i--){
+				existingBtns.get(lastVisibleIndex+i).setVisible(true);
+			}	
+		}
+		else if(visibleDiff > 0){
+			//too many btns showing
+			
+			int lastVisibleIndexTarget = results.size() - 1; // ! arraylist is zero-based 
+			
+			for(int i = visibleDiff;i>0;i--){
+				existingBtns.get(lastVisibleIndexTarget+i).setVisible(false);
+			}
+			
+		}
 		
+		shownBtns = results.size();
 		
-		for(App a:results)
-		{
+		//set correct button texts
+		for (int i=0;i<shownBtns;i++){
+			App a = results.get(i);
+			String lineSep = System.getProperty("line.separator");
+			System.out.print(lineSep);
 			System.out.println(a.name+" "+a.relevance);
 			
-			addBtn(getBtn(a.name));
-			
-			
-			
-			
-			
+			existingBtns.get(i).changeText(a.name);
+			existingBtns.get(i).app = a;
 		}
 		
+		
+		updateContext();
 		//if(!packed){	//the if needs to be removed when multiple lines of buttons become a thing.
-			frame.pack();
+			//frame.pack();
 			//packed = true;
 				//}
 			
-	}
-	
-	private LaunchButton createBtn(String btnText){
-		LaunchButton btnLaunch = new LaunchButton(btnText); 
-		//setup moved to ButtonLaunch(String appName)
-		return btnLaunch;
-	}
-	
-	private void addBtn(String btnText){
-		
-		LaunchButton btnLaunch = createBtn(btnText); 
-		btnsPanel.add(btnLaunch);
-		existingBtns.add(btnLaunch);
-		
 		
 	}
 	
-	private void addBtn(LaunchButton btnLaunch){
-		btnsPanel.add(btnLaunch);
-		existingBtns.add(btnLaunch);
-		System.out.println("adding btn to btnspanel");
-	}
-	
-	private LaunchButton getBtn(String btnText){
+	public void updateContext(){
+		System.out.println("Updating context. number = " + contextKeywordNumber); //debug
 		
-		for(LaunchButton b:oldBtns){
-			
-			if(b.getText().equals(btnText)){
-				System.out.println("getting btn from oldbtns"); //DEBUG;
-				return b;
-				
+		if (shownBtns == 0){ 
+			contextField.setText("");
+			return;
+		}
+		
+		String[] searchKeywords = textField.getText().split(" ");
+		
+		if (contextKeywordNumber>searchKeywords.length-1){
+			contextKeywordNumber = searchKeywords.length-1;
+		}
+		
+		String keyWord = searchKeywords[contextKeywordNumber];
+		
+		int wordsBefore = 2+1; //TODO : load this (2,3) from settings
+		int wordsAfter = 3+1;
+		
+		LaunchButton activeBtn = new LaunchButton();
+		if (textField.hasFocus()){
+		activeBtn = existingBtns.get(0);
+		}
+		if (!textField.hasFocus()){
+			for (LaunchButton b:existingBtns){
+				if (b.hasFocus()){
+					activeBtn = b;
+					
+				}
 			}
+		}
+		
+		System.out.println("Found active button ! " + activeBtn.getText()); //debug
+		String shortSearch = activeBtn.app.shortSearch;
+		int keyWordStart = shortSearch.toLowerCase().indexOf(keyWord); //TODO : consider whether to be a masochist and support multiple occurrences
+		//of keyword. Bwah.
+		
+		if (keyWordStart == -1){
+			contextField.setText(activeBtn.app.name + " : Keyword " + keyWord + " not found in description.");
+			return;
+		}
+		
+		int lowIndex = keyWordStart; 
+		int highIndex = keyWordStart;
+		
+		for (;lowIndex > 0;lowIndex --){ //silly for declaration to make sure lowIndex is visible further on.
+			
+			if(shortSearch.charAt(lowIndex)==" ".charAt(0)){
+				wordsBefore --;
+			}
+			
+			if (wordsBefore == 0){break;}
 			
 		}
 		
-		for(LaunchButton b:existingBtns){
+		for (int length=shortSearch.length()-1;highIndex < length;highIndex ++){ 
 			
-			if(b.getText().equals(btnText)){
-				return b;
+			if(shortSearch.charAt(highIndex)==" ".charAt(0)){
+				wordsAfter --;
 			}
-			
-		}
-		
-		return createBtn(btnText);
-		
-	}
 
-	private void removeBtn(String btnText){
-		
-		boolean removed = false;
-		for (LaunchButton b:existingBtns){
-			if(b.getText().equals(btnText)){
-				btnsPanel.remove(b);
-				existingBtns.remove(b);
-				removed = true;
-				break;
-			}
-			if (!removed){
-			System.out.println("Nay my lord, there is no button saying " + btnText + " for me to remove!"); //DEBUG;
-			//TODO : consider whether this should throw an exception
-			}
+			if (wordsAfter == 0){break;}
 		}
+		
+		contextField.setText(activeBtn.app.name + "("+keyWord+")" +" : " + shortSearch.substring(lowIndex, highIndex));
+		
 		
 	}
 	
 	private class LaunchButton extends JButton{
 		String theAppName = "";
-		
-		LaunchButton(String appName){
-			super(appName);
-
-			theAppName = appName;
+		public App app;  //TODO : perhaps change redundant variables into references via app
+		public void changeText(String fullAppName){
+			theAppName = fullAppName;
 			this.setText(processAppName(theAppName));
+		}
+		
+		LaunchButton(){
+			super(" ");
+			//app = new App("defaultN","defaultS"); probably redundant
 
 			this.setMargin(new Insets(0,0,0,0));
 			

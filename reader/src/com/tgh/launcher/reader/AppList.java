@@ -19,7 +19,7 @@ public class AppList {
 			String appName = "";
 			// String shortSearch="";
 			StringBuilder shortSearchSB = new StringBuilder();
-			metaInfoCount = Integer.parseInt(line);
+			metaInfoCount = Integer.parseInt(line);;
 			while (line != null) {
 				line = br.readLine();
 				if (line == null) {
