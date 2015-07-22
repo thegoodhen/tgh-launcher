@@ -425,6 +425,8 @@ public class Gui {
 		
 		
 		String shortSearch = activeBtn.app.shortSearch;
+		shortSearch = shortSearch.replaceAll("\\s+", " "); //<---this code taken from here http://stackoverflow.com/questions/3958955/how-to-remove-duplicate-white-spaces-in-string-using-java
+		
 		int keyWordStart = shortSearch.toLowerCase().indexOf(keyWord); //TODO : consider whether to be a masochist and support multiple occurrences
 		//of keyword. Bwah.
 		
@@ -437,7 +439,6 @@ public class Gui {
 		int highIndex = keyWordStart;
 		
 		
-		shortSearch = shortSearch.replaceAll("\\s+", " "); //<---this code taken from here http://stackoverflow.com/questions/3958955/how-to-remove-duplicate-white-spaces-in-string-using-java
 		
 		System.out.println(shortSearch);
 		for (;lowIndex > 0;lowIndex --){ //silly for declaration to make sure lowIndex is visible further on.
