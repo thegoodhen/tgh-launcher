@@ -17,6 +17,7 @@ import java.awt.GraphicsDevice;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.SystemColor;
 import java.util.List;
 
 import javax.swing.JTextField;
@@ -39,6 +40,8 @@ import java.util.Set;
 import java.util.Random;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.InputMethodEvent;
 
 public class Gui {
@@ -56,6 +59,7 @@ public class Gui {
 	private JPanel btnsPanel;
 	private int shownBtns;
 	private int contextKeywordNumber;
+	private LaunchButton activeBtn;
 	
 	/**
 	 * Launch the application.
@@ -127,7 +131,7 @@ public class Gui {
 		        		System.out.println("requesting focus for textfield"); //debug
 		        		
 		        		textField.requestFocusInWindow(); //set focus to textfield
-		        		updateContext();
+		        		
 			        	return true;
 			        	}
 		        	
@@ -135,7 +139,7 @@ public class Gui {
 		        		System.out.println("requesting focus for 2nd butt"); //debug
 		        		
 		        		existingBtns.get(1).requestFocusInWindow(); //set focus to 2nd button
-		        		updateContext();
+		        		
 			        	return true; 
 		        	}
 		        	
@@ -143,13 +147,13 @@ public class Gui {
 		        		System.out.println("requesting focus for 1st butt"); //debug
 		        		
 		        		existingBtns.get(0).requestFocusInWindow(); //set focus to 1st button
-		        		updateContext();
+		        		
 			        	return true; 
 		        	}
 		        	
 		        	
 		        	
-		        	updateContext();
+		        	
 		        	return true; // if textfield has focus and there are no buttons, do nothing
 		        
 		        }
@@ -173,17 +177,6 @@ public class Gui {
 		        	}
 		        }
 		        
-		        if(e.getID()==KeyEvent.KEY_RELEASED && e.getKeyCode()==KeyEvent.VK_H){
-		        	if(!textField.hasFocus()){
-	        		updateContext();
-		        	}
-		        }
-		        
-		        if(e.getID()==KeyEvent.KEY_RELEASED && e.getKeyCode()==KeyEvent.VK_L){
-		        	if(!textField.hasFocus()){
-	        		updateContext();
-		        	}
-		        }
 		        
 		      //Allow the event to be redispatched
 		        return false;
@@ -198,6 +191,25 @@ public class Gui {
 		 
 	
 		textField = new JTextField();
+		textField.addFocusListener(new FocusListener(){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				if(existingBtns.size()>0){
+				existingBtns.get(0).setBackground(Color.BLUE);
+				activeBtn = existingBtns.get(0);
+				}
+				updateContext();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if(existingBtns.size()>0){
+					existingBtns.get(0).setBackground(SystemColor.control);
+					}
+			}				
+		});
+		
 		contextKeywordNumber = 0;	
 		
 		textField.getDocument().addDocumentListener(new DocumentListener() {
@@ -364,13 +376,12 @@ public class Gui {
 		}
 		
 		
-		updateContext();
 		//if(!packed){	//the if needs to be removed when multiple lines of buttons become a thing.
 			//frame.pack();
 			//packed = true;
 				//}
 			
-		
+		updateContext();
 	}
 	
 	public void updateContext(){
@@ -392,26 +403,19 @@ public class Gui {
 		int wordsBefore = 2+1; //TODO : load this (2,3) from settings
 		int wordsAfter = 3+1;
 		
-		LaunchButton activeBtn = new LaunchButton();
-		if (textField.hasFocus()){
-		activeBtn = existingBtns.get(0);
-		}
-		if (!textField.hasFocus()){
-			for (LaunchButton b:existingBtns){
-				if (b.hasFocus()){
-					activeBtn = b;
-					
-				}
-			}
+		
+		
+		if (activeBtn==null){
+			contextField.setText("Error : Active button not found.");
+			return;
 		}
 		
-		System.out.println("Found active button ! " + activeBtn.getText()); //debug
 		String shortSearch = activeBtn.app.shortSearch;
 		int keyWordStart = shortSearch.toLowerCase().indexOf(keyWord); //TODO : consider whether to be a masochist and support multiple occurrences
 		//of keyword. Bwah.
 		
 		if (keyWordStart == -1){
-			contextField.setText(activeBtn.app.name + " : Keyword " + keyWord + " not found in description.");
+			contextField.setText(activeBtn.app.name + "(( : Keyword " + keyWord + " not found in description.))");
 			return;
 		}
 		
@@ -437,7 +441,7 @@ public class Gui {
 			if (wordsAfter == 0){break;}
 		}
 		
-		contextField.setText(activeBtn.app.name + "("+keyWord+")" +" : " + shortSearch.substring(lowIndex, highIndex));
+		contextField.setText(activeBtn.app.name + "["+keyWord+"]" +" : " + shortSearch.substring(lowIndex, highIndex));
 		
 		
 	}
@@ -456,6 +460,21 @@ public class Gui {
 			//app = new App("defaultN","defaultS"); probably redundant
 
 			this.setMargin(new Insets(0,0,0,0));
+			
+			this.addFocusListener(new FocusListener(){
+
+				@Override
+				public void focusGained(FocusEvent e) {
+					e.getComponent().setBackground(Color.BLUE);
+					activeBtn = (LaunchButton)e.getComponent();
+					updateContext();
+				}
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					e.getComponent().setBackground(SystemColor.control);
+				}				
+			});
 			
 			this.addActionListener(new ActionListener(){
 					@Override
