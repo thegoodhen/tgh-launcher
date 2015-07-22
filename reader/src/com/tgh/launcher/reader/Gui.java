@@ -60,6 +60,7 @@ public class Gui {
 	private int shownBtns;
 	private int contextKeywordNumber;
 	private LaunchButton activeBtn;
+	private Color defColour;
 	
 	/**
 	 * Launch the application.
@@ -205,7 +206,7 @@ public class Gui {
 			@Override
 			public void focusLost(FocusEvent e) {
 				if(existingBtns.size()>0){
-					existingBtns.get(0).setBackground(SystemColor.control);
+					existingBtns.get(0).setBackground(defColour);
 					}
 			}				
 		});
@@ -298,6 +299,7 @@ public class Gui {
 		
 		
 		LaunchButton vanguard = new LaunchButton();
+		defColour = vanguard.getBackground();
 		btnsPanel.add(vanguard); //added so that frame.pack gets correct height. Can be left in,
 										   //since in most cases at least one btn will be used anyway.
 		existingBtns.add(vanguard);
@@ -460,7 +462,7 @@ public class Gui {
 			//app = new App("defaultN","defaultS"); probably redundant
 
 			this.setMargin(new Insets(0,0,0,0));
-			
+			this.setBackground(SystemColor.control);
 			this.addFocusListener(new FocusListener(){
 
 				@Override
@@ -472,7 +474,7 @@ public class Gui {
 
 				@Override
 				public void focusLost(FocusEvent e) {
-					e.getComponent().setBackground(SystemColor.control);
+					e.getComponent().setBackground(defColour);
 				}				
 			});
 			
