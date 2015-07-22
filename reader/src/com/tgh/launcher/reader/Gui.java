@@ -264,6 +264,8 @@ public class Gui {
 		btnsPanel.setBackground(btnsPanel.getParent().getBackground());
 	    
 		
+
+		
 		// suppress normal tab behavior
 		frame.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
 		frame.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET );
@@ -463,7 +465,6 @@ public class Gui {
 	private class LaunchButton extends JButton{
 		String theAppName = "";
 		public App app;  //TODO : perhaps change redundant variables into references via app
-		
 		public void changeText(String fullAppName){
 			theAppName = fullAppName;
 			this.setText(processAppName(theAppName));
@@ -513,6 +514,7 @@ public class Gui {
 			 * Makes the button fire an actionPerformed on enter or spacebar press,
 			 * as opposed to just spacebar.
 			 * TODO: Remove spacebar triggering
+			 * REM: Please don't. Spacebar is more accessible than enter.
 			 */
 			super.registerKeyboardAction(
 	                super.getActionForKeyStroke(
