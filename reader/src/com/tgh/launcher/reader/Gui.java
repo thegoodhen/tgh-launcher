@@ -417,8 +417,8 @@ public class Gui {
 		
 		String keyWord = searchKeywords[contextKeywordNumber];
 		
-		int wordsBefore = 2+1; //TODO : load this (2,3) from settings
-		int wordsAfter = 3+1;
+		int wordsBefore = 2+1+9; //TODO : load this (2,3) from settings
+		int wordsAfter = 3+1+9;
 		
 		
 		

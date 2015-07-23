@@ -5,13 +5,13 @@ import java.util.regex.Pattern;
 
 public class CommandManager {
 
-			  enum possibleTask{get, toggle, set, unset, assign};
+	enum possibleTask{get, toggle, set, unset, assign};
 	static Pattern assignPattern;
 	static Pattern togglePattern;
 	static Pattern getPattern;
 	static Pattern unsetPattern;
 	static Pattern setPattern;
-
+	static OptionHolder oh;
 	public static void temCommandManager()
 	{
 		assignPattern=Pattern.compile("^set\\s+(.*?)\\s*=\\s*(.*?)$");
@@ -19,6 +19,9 @@ public class CommandManager {
 		getPattern=Pattern.compile("^set\\s+(.*?)\\s*\\?\\s*$");
 		unsetPattern=	Pattern.compile("^set\\s+no(.*?)\\s*$");
 		setPattern=Pattern.compile("^set\\s+(.*?)\\s*$");
+		oh=new OptionHolder();
+		IntOption kokodak=new IntOption("kokodak",0,0,9);
+		oh.addOption(kokodak);
 	}
 	public static void handleCommand(String cmd)
 
@@ -84,6 +87,12 @@ default:
 	private static void assign(String var, String val)
 	{
 		//TODO: implement
+		try {
+			oh.setStringValue(var, val);
+		} catch (NoSuchOptionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Assigned var "+var+" a value of "+val);
 	}
 	private static void toggle(String var)
@@ -106,6 +115,7 @@ default:
 	public static void main(String args[])
 	{
 		temCommandManager();
+		handleCommand("set kokodak=10");
 		handleCommand("set     nopipka");
 		handleCommand("set     pipka    ");
 		handleCommand("set     pipka!  ");
