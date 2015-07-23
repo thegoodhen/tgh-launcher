@@ -66,6 +66,9 @@ public class Gui {
 	private LaunchButton activeBtn;
 	private Color defColour;
 	private String greetMsg;
+	static CommandManager cmdMngr=new CommandManager();
+	static OptionHolder oHolder;
+
 	
 	/**
 	 * Launch the application.
@@ -184,8 +187,10 @@ public class Gui {
 		        }
 		        
 		        
+		        
 		      //Allow the event to be redispatched
 		        return false;
+		       
 		    }
 		}
 		
@@ -195,6 +200,14 @@ public class Gui {
 		         KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher( new KeyDispatcher());
 		 
+		//commandManager copypasta from example.java
+		
+		oHolder=new OptionHolder();
+		oHolder.addOption(new IntOption("pipka", 10,0,50));
+		oHolder.addOption(new IntOption("kokodak", 0,0,100));
+		oHolder.addOption(new IntOption("kvok", 10,0,100));
+		cmdMngr.setOptionHolder(oHolder);
+		
 	
 		textField = new JTextField();
 		textField.addFocusListener(new FocusListener(){
@@ -233,6 +246,21 @@ public class Gui {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				if(textField.getText().length()>=1){
+				if(textField.getText().charAt(0)==":".charAt(0)){
+					
+					try{
+					System.out.println(cmdMngr.handleCommand(textField.getText().substring(1, textField.getText().length())));
+					}
+					catch(Exception f){
+						f.printStackTrace();
+					}
+					return;
+					
+					}
+				}
 				
 				try{
 					existingBtns.get(0).doClick();
@@ -326,6 +354,14 @@ public class Gui {
 	public void updateSearchResults()
 	{
 		
+		if(textField.getText().length()>=1 && textField.getText().charAt(0)==":".charAt(0)){
+			//TODO : show buttons or something
+			updateContext();
+			return;
+		}
+		
+		else{
+		
 		results=al.findApp(textField.getText(), 5, 10);
 		
 		
@@ -392,11 +428,22 @@ public class Gui {
 			//frame.pack();
 			//packed = true;
 				//}
-			
+		
 		updateContext();
+		}
 	}
 	
 	public void updateContext(){
+		if(textField.getText().length()==0){
+			contextField.setText(greetMsg);
+			return;
+		}
+		else if(textField.getText().charAt(0)==":".charAt(0)){
+			//TODO: update context to provide useful info about the command (?)
+			contextField.setText("You are now entering a command ! Good job.");
+			return;
+		}
+		else{
 		System.out.println("Updating context. number = " + contextKeywordNumber); //debug
 		
 		if (shownBtns == 0){ 
@@ -458,13 +505,14 @@ public class Gui {
 			}
 
 			if (wordsAfter == 0){break;}
+			
 		}
 		
 		
 		contextField.setText("<html>"+activeBtn.app.name +" : " + shortSearch.substring(lowIndex, keyWordStart) +"<font color=\"blue\"><u><b>"
 		+keyWord+"</b></u></font>"+shortSearch.substring(keyWordStart+keyWord.length(), highIndex)+"</html>");
-		
-		
+			
+		}
 	}
 	
 	private class LaunchButton extends JButton{
