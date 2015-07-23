@@ -19,7 +19,7 @@ public String getStringValue(String key) throws NoSuchOptionException
 		throw new  NoSuchOptionException("No option of name "+key+" found.");
 	}
 }
-public void setStringValue(String key, String value) throws NoSuchOptionException
+public void setStringValue(String key, String value) throws NoSuchOptionException, IllegalArgumentException
 {
 	try
 	{
@@ -29,6 +29,25 @@ public void setStringValue(String key, String value) throws NoSuchOptionExceptio
 	{
 		throw new NoSuchOptionException("No option of name "+key+" found.");
 	}
+}
+public int getInteger(String key) throws NoSuchOptionException
+{
+	try
+	{
+         Option o=map.get(key);
+         if (o instanceof IntOption)
+         {
+        	 return ((IntOption)o).getValue();
+         }
+         else
+         {
+        	 throw new NoSuchOptionException("Option "+key+" cannot be expressed as Integer.");
+         }
+	}
+	catch(NullPointerException e)
+	{
+		throw new NoSuchOptionException("No option of name "+key+" found.");
+	}	
 }
 public void addOption(Option o)
 {

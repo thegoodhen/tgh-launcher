@@ -35,7 +35,7 @@ String name;
 		this.value=Integer.parseInt(value);
 		if(this.value>maxValue||this.value<minValue)
 		{
-			throw new IllegalArgumentException("Value "+value+ "is not withing range <"+minValue+", "+maxValue+">.");
+			throw new IllegalArgumentException("Value "+value+ " is not withing range <"+minValue+", "+maxValue+">.");
 		}
 	}
 	catch(NumberFormatException e)
