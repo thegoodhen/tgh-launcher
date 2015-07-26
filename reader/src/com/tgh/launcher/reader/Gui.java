@@ -61,7 +61,7 @@ public class Gui {
 	private ArrayList<LaunchButton> oldBtns;
 	private JPanel upperPanel;
 	private JPanel btnsPanel;
-	private int shownBtns;
+	private int shownBtnsCount;
 	private int contextKeywordNumber;
 	private LaunchButton activeBtn;
 	private Color defColour;
@@ -261,12 +261,13 @@ public class Gui {
 					
 					}
 				}
+				else if (!(shownBtnsCount==0)){
 				
 				try{
 					existingBtns.get(0).doClick();
 				}
 				catch(Exception e){}
-				
+				}
 			}
 			
 			
@@ -285,7 +286,7 @@ public class Gui {
 		textField.setColumns(10);
 		
 		btnsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		shownBtns = 0;
+		shownBtnsCount = 0;
 	    btnsPanel.setFocusCycleRoot(true); //this forces the focus traversal to cycle inside the panel
 	    
 		upperPanel.add(btnsPanel);
@@ -378,7 +379,7 @@ public class Gui {
 				existingBtns.add(butt);
 				btnsPanel.add(butt);
 				System.out.println("adding a new button ! needed btns left : " + (neededBtns -1));
-				/*Since buttons generated here do not get added to shownBtns, they will likely be unnecessarily
+				/*Since buttons generated here do not get added to shownBtnsCount, they will likely be unnecessarily
 				 * set to visible in following code even though they need not be. I decided to keep it that way,
 				 * since it would likely be annoying to handle.
 				 */
@@ -387,13 +388,13 @@ public class Gui {
 		}
 		
 		//show or hide buttons
-		int visibleDiff = (shownBtns - results.size()); //number of btns currently shown - number of btns that will be needed.
+		int visibleDiff = (shownBtnsCount - results.size()); //number of btns currently shown - number of btns that will be needed.
 		
 		System.out.print("Visiblediff is " + visibleDiff); //DEBUG
 		if(visibleDiff < 0){ 
 			//not enough shown btns
 			
-			int lastVisibleIndex = shownBtns - 1; // ! arraylist is zero-based 
+			int lastVisibleIndex = shownBtnsCount - 1; // ! arraylist is zero-based 
 			
 			for(int i = - visibleDiff;i>0;i--){
 				existingBtns.get(lastVisibleIndex+i).setVisible(true);
@@ -410,10 +411,10 @@ public class Gui {
 			
 		}
 		
-		shownBtns = results.size();
+		shownBtnsCount = results.size();
 		
 		//set correct button texts
-		for (int i=0;i<shownBtns;i++){
+		for (int i=0;i<shownBtnsCount;i++){
 			App a = results.get(i);
 			String lineSep = System.getProperty("line.separator");
 			System.out.print(lineSep);
@@ -446,7 +447,7 @@ public class Gui {
 		else{
 		System.out.println("Updating context. number = " + contextKeywordNumber); //debug
 		
-		if (shownBtns == 0){ 
+		if (shownBtnsCount == 0){ 
 			contextField.setText(greetMsg);
 			return;
 		}
