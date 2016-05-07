@@ -1,3 +1,4 @@
+#DEPRECATED - this project is now deprecated; it has been rewritten in shell utilizing ROFI. Replacement coming soon.
 # tgh-launcher
 A repo for my new awsum Linux launcher app, because d-menu doesn't cut it and after some research I wasn't satisfied with the options currently available. 
 ##Intended developement
